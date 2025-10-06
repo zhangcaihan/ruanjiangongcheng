@@ -1,3 +1,5 @@
 # ruanjiangongcheng
 This is the homepage for our team project
-![团队Logo](team-logo.png)
+<p align="center">
+  <img src="team-logo.png" width="300" alt="团队Logo">
+</p>
