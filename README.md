@@ -1,4 +1,4 @@
-# ruanjiangongcheng
+<span style="color:#007acc"># ruanjiangongcheng</span>
 ## This is the homepage for our team project
 <p align="center">
   <img src="team-logo.png" width="400" alt="团队Logo">
