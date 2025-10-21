@@ -1,0 +1,53 @@
+[
+  {
+    "id": 1,
+    "name": "运动手表A",
+    "price": 699,
+    "rating": 4.5,
+    "features": [
+      "续航",
+      "GPS",
+      "防水"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "运动手表B",
+    "price": 799,
+    "rating": 4.2,
+    "features": [
+      "健康监测",
+      "GPS"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "真无线耳机X",
+    "price": 299,
+    "rating": 4.7,
+    "features": [
+      "降噪",
+      "低延迟"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "真无线耳机Y",
+    "price": 499,
+    "rating": 4.3,
+    "features": [
+      "通话清晰",
+      "防水"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "电动牙刷Pro",
+    "price": 399,
+    "rating": 4.6,
+    "features": [
+      "压力感应",
+      "多模式"
+    ]
+  }
+]

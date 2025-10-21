@@ -1,0 +1,6 @@
+app:
+  name: "智能任务管理助手"
+  data_dir: "./data"
+
+todo:
+  store: "./data/todos.json"

@@ -1,0 +1,5 @@
+# 智能任务管理助手依赖
+pydantic>=2.8
+pyyaml>=6.0.2
+rich>=13.7.1
+streamlit>=1.31.0
