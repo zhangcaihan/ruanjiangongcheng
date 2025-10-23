@@ -16,8 +16,26 @@ st.set_page_config(
 # 初始化
 if "messages" not in st.session_state:
     st.session_state.messages = []
+
 if "agent" not in st.session_state:
-    st.session_state.agent = Agent()
+    # 启用 MCP 模式：创建并持久化 MCP 客户端（跨 rerun 复用连接）
+    from pathlib import Path
+    from src.mcp_client import MCPClient
+
+    root = Path(__file__).resolve().parent
+    server_path = root / "mcp_server" / "server.py"
+
+    mcp_client = MCPClient(str(server_path))
+    try:
+        mcp_client.initialize()
+        st.session_state.mcp_client = mcp_client
+        st.session_state.agent = Agent(use_mcp=True, mcp_client=mcp_client)
+        st.session_state.use_mcp = True
+    except Exception as e:
+        # 兜底：如果 MCP 初始化失败，回退传统模式，但提示原因
+        st.warning(f"MCP 初始化失败，已回退到传统模式：{e}")
+        st.session_state.agent = Agent(use_mcp=False)
+        st.session_state.use_mcp = False
 
 # 页面标题
 st.title("✅ 智能任务管理助手")
@@ -55,13 +73,19 @@ with col1:
 with col2:
     st.header("📋 任务看板")
     
-    # 任务统计
-    stats = st.session_state.agent.todo.get_statistics()
+    # 任务统计（MCP）
+    if st.session_state.use_mcp:
+        stats = st.session_state.mcp_client.get_statistics()
+    else:
+        stats = st.session_state.agent.todo.get_statistics()
     st.info(stats)
     
-    # 待办任务列表
+    # 待办任务列表（MCP）
     st.subheader("⏳ 待办任务")
-    pending_tasks = st.session_state.agent.todo.list_tasks("待办")
+    if st.session_state.use_mcp:
+        pending_tasks = st.session_state.mcp_client.list_tasks("待办")
+    else:
+        pending_tasks = st.session_state.agent.todo.list_tasks("待办")
     
     if pending_tasks:
         for task in pending_tasks:
@@ -82,23 +106,32 @@ with col2:
             
             with col_done:
                 if st.button("✅", key=f"done_{task['id']}", help="完成任务"):
-                    st.session_state.agent.todo.complete_task(task['id'])
+                    if st.session_state.use_mcp:
+                        st.session_state.mcp_client.complete_task(task['id'])
+                    else:
+                        st.session_state.agent.todo.complete_task(task['id'])
                     st.success(f"✅ 已完成：{task['title']}")
                     st.rerun()
             
             with col_del:
                 if st.button("🗑️", key=f"del_{task['id']}", help="删除任务"):
-                    st.session_state.agent.todo.delete_task(task['id'])
-                    st.warning(f"�️ 已删除：{task['title']}")
+                    if st.session_state.use_mcp:
+                        st.session_state.mcp_client.delete_task(task['id'])
+                    else:
+                        st.session_state.agent.todo.delete_task(task['id'])
+                    st.warning(f"🗑️ 已删除：{task['title']}")
                     st.rerun()
             
             st.divider()
     else:
         st.success("🎉 暂无待办任务！")
     
-    # 进行中的任务
+    # 进行中的任务（MCP）
     st.subheader("🔄 进行中")
-    in_progress_tasks = st.session_state.agent.todo.list_tasks("进行中")
+    if st.session_state.use_mcp:
+        in_progress_tasks = st.session_state.mcp_client.list_tasks("进行中")
+    else:
+        in_progress_tasks = st.session_state.agent.todo.list_tasks("进行中")
     
     if in_progress_tasks:
         for task in in_progress_tasks:
@@ -117,13 +150,19 @@ with col2:
             
             with col_done:
                 if st.button("✅", key=f"done_prog_{task['id']}", help="完成任务"):
-                    st.session_state.agent.todo.complete_task(task['id'])
+                    if st.session_state.use_mcp:
+                        st.session_state.mcp_client.complete_task(task['id'])
+                    else:
+                        st.session_state.agent.todo.complete_task(task['id'])
                     st.success(f"✅ 已完成：{task['title']}")
                     st.rerun()
             
             with col_del:
                 if st.button("🗑️", key=f"del_prog_{task['id']}", help="删除任务"):
-                    st.session_state.agent.todo.delete_task(task['id'])
+                    if st.session_state.use_mcp:
+                        st.session_state.mcp_client.delete_task(task['id'])
+                    else:
+                        st.session_state.agent.todo.delete_task(task['id'])
                     st.warning(f"🗑️ 已删除：{task['title']}")
                     st.rerun()
             
@@ -131,9 +170,12 @@ with col2:
     else:
         st.caption("暂无进行中的任务")
     
-    # 已完成的任务
+    # 已完成的任务（MCP）
     with st.expander("✅ 已完成任务"):
-        completed_tasks = st.session_state.agent.todo.list_tasks("已完成")
+        if st.session_state.use_mcp:
+            completed_tasks = st.session_state.mcp_client.list_tasks("已完成")
+        else:
+            completed_tasks = st.session_state.agent.todo.list_tasks("已完成")
         
         if completed_tasks:
             for task in completed_tasks[-5:]:  # 只显示最近5个已完成任务
@@ -152,7 +194,10 @@ with col2:
                 
                 with col_del:
                     if st.button("🗑️", key=f"del_comp_{task['id']}", help="删除任务"):
-                        st.session_state.agent.todo.delete_task(task['id'])
+                        if st.session_state.use_mcp:
+                            st.session_state.mcp_client.delete_task(task['id'])
+                        else:
+                            st.session_state.agent.todo.delete_task(task['id'])
                         st.warning(f"🗑️ 已删除：{task['title']}")
                         st.rerun()
                 
@@ -176,15 +221,53 @@ with col2:
             submitted = st.form_submit_button("添加任务", use_container_width=True)
             if submitted and task_title:
                 deadline_str = task_deadline.strftime("%Y-%m-%d") if task_deadline else None
-                result = st.session_state.agent.todo.add_task(
-                    task_title, deadline_str, task_priority, task_category
-                )
-                st.success(result["message"])
+                if st.session_state.use_mcp:
+                    result = st.session_state.mcp_client.add_task(
+                        task_title, task_priority, deadline_str, task_category
+                    )
+                else:
+                    result = st.session_state.agent.todo.add_task(
+                        task_title, deadline_str, task_priority, task_category
+                    )
+                st.success(result.get("message", "任务已添加"))
                 st.rerun()
 
 # 侧边栏
 with st.sidebar:
     st.header("⚙️ 功能面板")
+    
+    # 模式开关：使用 MCP 或 本地直连
+    desired_use_mcp = st.checkbox("使用 MCP 模式", value=st.session_state.get("use_mcp", True))
+    if desired_use_mcp != st.session_state.get("use_mcp", False):
+        # 模式发生变化：重新初始化 Agent / MCP 客户端
+        from pathlib import Path
+        if desired_use_mcp:
+            try:
+                from src.mcp_client import MCPClient
+                root = Path(__file__).resolve().parent
+                server_path = root / "mcp_server" / "server.py"
+                mcp_client = MCPClient(str(server_path))
+                mcp_client.initialize()
+                st.session_state.mcp_client = mcp_client
+                st.session_state.agent = Agent(use_mcp=True, mcp_client=mcp_client)
+                st.session_state.use_mcp = True
+                st.success("已切换到 MCP 模式")
+            except Exception as e:
+                st.session_state.agent = Agent(use_mcp=False)
+                st.session_state.use_mcp = False
+                st.error(f"切换 MCP 失败，已回退本地模式：{e}")
+        else:
+            # 关闭 MCP 客户端并切换到本地模式
+            try:
+                if st.session_state.get("mcp_client"):
+                    st.session_state.mcp_client.close()
+            except Exception:
+                pass
+            st.session_state.mcp_client = None
+            st.session_state.agent = Agent(use_mcp=False)
+            st.session_state.use_mcp = False
+            st.info("已切换到本地模式")
+        st.rerun()
     
     # 快速指令
     st.subheader("📌 快速操作")
@@ -240,14 +323,12 @@ with st.sidebar:
         - 📊 任务统计分析
         - 🔍 智能搜索
         - 💬 自然语言交互
+        - 🚀 MCP 协议集成
         
-        **技术栈：**  
-        Python + Streamlit + Pydantic
-        
-        **作业要求：**  
-        MCP兼容框架 ✓  
-        自然语言对话 ✓  
-        执行操作能力 ✓
+        **技术栈：**
+        - Streamlit + Python
+        - Model Context Protocol (MCP)
+        - 自然语言处理
         """)
 
 # 页脚

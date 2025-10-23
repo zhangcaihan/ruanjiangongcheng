@@ -1,137 +1,128 @@
 # 智能任务管理助手
 
-一个"能说会做"的AI智能体，帮助用户整理任务和生成待办清单。
+一个“能说会做”的本地任务管理智能体，支持自然语言对话与任务增删改查、待办清单、统计分析。提供 Web UI、CLI，以及标准 MCP（Model Context Protocol）服务器，便于外部客户端调用。
 
-## 🎯 项目特点
+## 🎯 特性总览
 
-### "能说" - 自然语言交互
-- ✅ 支持中文对话式交互
-- ✅ 智能意图识别
-- ✅ 上下文记忆
+- 能说
+  - 中文自然语言指令与轻量闲聊
+  - 规则式意图识别（离线、无需网络）
+- 会做
+  - 任务增删改查、搜索、状态更新（待办/进行中/已完成）
+  - 今日待办清单生成、统计分析
+  - 数据持久化到本地 JSON
+- MCP 标准
+  - 内置 MCP Server（stdio 传输）
+  - Web UI 默认通过 MCP 调用工具（失败自动回退本地）
+  - 附带冒烟测试脚本验证端到端调用
+- UI
+  - Streamlit Web UI
+  - Rich CLI 命令行
 
-### "会做" - 任务管理能力
-- ✅ 任务增删改查
-- ✅ 待办清单生成
-- ✅ 任务统计分析
-- ✅ 智能搜索
-- ✅ 优先级管理
-- ✅ 截止日期提醒
+数据存储路径：./data/todos.json（UI/CLI/MCP 共享同一数据）
 
-## 📁 项目结构
+## 🧭 架构
+
+- Web UI（app.py）：自然语言 → Agent → MCP Client → MCP Server → TodoTool
+- MCP Server（mcp_server/server.py）：暴露任务工具（add/list/complete/delete/...）
+- MCP Client（src/mcp_client.py）：提供同步调用封装（后台事件循环 + 自动重连）
+- Agent（src/agent_core.py）：自然语言解析 + 调用执行
+
+说明：Web UI 默认通过 MCP 调用；若 MCP 初始化失败，会自动回退到本地工具并提示。侧边栏提供“使用 MCP 模式”开关，可随时切换模式。
+
+## 📁 目录结构
 
 ```
 agent/
+├── app.py                 # Streamlit Web UI（默认通过 MCP）
+├── scripts/
+│   └── mcp_smoke_test.py  # MCP 冒烟测试脚本
+├── mcp_server/
+│   └── server.py          # MCP Server（stdio）
 ├── src/
-│   ├── agent_core.py      # 智能体核心逻辑
-│   ├── main.py            # CLI 命令行入口
+│   ├── agent_core.py      # 自然语言解析 + 执行
+│   ├── mcp_client.py      # MCP 客户端封装
+│   ├── chitchat.py        # 轻量闲聊
 │   └── tools/
-│       └── todo_tool.py   # 任务管理工具
+│       └── todo_tool.py   # 任务工具（本地实现）
+├── data/
+│   └── todos.json         # 任务数据（自动创建）
 ├── config/
-│   └── settings.yaml      # 配置文件
-├── data/                  # 数据存储（自动创建）
-│   └── todos.json        # 任务数据
-├── app.py                # Streamlit Web UI
-├── demo.py               # 功能演示脚本
-├── start_web.bat         # Web UI 启动脚本（Windows）
-├── start_cli.bat         # CLI 启动脚本（Windows）
-├── run_demo.bat          # 演示脚本启动（Windows）
-└── requirements.txt      # 依赖包列表
+│   └── settings.yaml
+├── docs/
+│   └── MCP.md             # MCP 使用说明（可选）
+├── requirements.txt
+├── start_web.bat          # Windows 启动 Web UI（可选）
+├── start_cli.bat          # Windows 启动 CLI（可选）
+└── start_cli.sh           # Linux/WSL 启动 CLI（可选）
 ```
 
-## 🚀 快速开始
+## 🚀 快速开始（Windows 推荐）
 
-### 方式1：Web UI（推荐）
+前置：已安装 Conda 环境 dog，项目位于 E:\agent
 
-**Windows：**
-双击运行 `start_web.bat`
-
-**或手动运行：**
-```bash
-# 确保已激活 conda 环境
+- 安装依赖
+```powershell
 conda activate dog
-
-# 启动 Web UI
-streamlit run app.py
+cd E:\agent
+pip install -r requirements.txt
 ```
 
-浏览器自动打开 http://localhost:8501
-
-### 方式2：命令行 CLI
-
-**Windows：**
-双击运行 `start_cli.bat`
-
-**或手动运行：**
-```bash
+- 启动 Web UI（默认通过 MCP）
+```powershell
 conda activate dog
+cd E:\agent
+python -m streamlit run app.py
+```
+浏览器打开 http://localhost:8501（端口占用可改为 --server.port 8503）
+
+- 启动 CLI
+```powershell
+conda activate dog
+cd E:\agent
 python -m src.main
 ```
 
-### 方式3：功能演示
+## 🧪 MCP 验证（脚本/Inspector）
 
-**Windows：**
-双击运行 `run_demo.bat`
-
-**或手动运行：**
-```bash
+- 运行冒烟测试（端到端：add_task → list_tasks）
+```powershell
 conda activate dog
-python demo.py
+C:\Users\19434\.conda\envs\dog\python.exe -u E:\agent\scripts\mcp_smoke_test.py
 ```
 
-## 💬 使用示例
+- 可选：MCP Inspector 可视化调试
+```powershell
+conda activate dog
+C:\Users\19434\.conda\envs\dog\Scripts\mcp.exe dev E:\agent\mcp_server\server.py
+```
+连接配置：
+- Transport: STDIO
+- Command: C:\Users\19434\.conda\envs\dog\python.exe
+- Arguments: E:\agent\mcp_server\server.py
+- Authentication: None
 
-### 添加任务
-```
-你：添加任务 完成项目报告 优先级高 截止2025-10-25
-助手：✅ 已添加任务：完成项目报告 (优先级: 高)
-```
+## �️ 自然语言指令示例
 
-### 查看任务
-```
-你：查看任务
-助手：📝 任务列表（共 3 个）：
-1. 🔴 [待办] 完成项目报告 | 📅 2025-10-25 | 🏷️ 工作
-2. 🟡 [待办] 学习Python | 🏷️ 学习
-3. 🟢 [待办] 买菜 | 🏷️ 生活
-```
+- 添加任务
+  - 添加任务 完成项目报告 优先级高 截止2025-10-25 类别工作
+  - 新建任务 复习考试 明天截止 优先级中
+- 查看与搜索
+  - 查看任务 / 查看待办任务 / 查看已完成任务
+  - 搜索任务 报告
+  - 待办清单 / 今日待办
+- 状态与删除
+  - 完成任务 1
+  - 开始任务 2
+  - 删除任务 3
+- 统计
+  - 任务统计 / 任务情况
 
-### 生成待办清单
-```
-你：待办清单
-助手：📋 今日待办清单：
-1. [1] 🔴 完成项目报告 | 截止: 2025-10-25
-2. [2] 🟡 学习Python
-3. [3] 🟢 买菜
-```
+支持相对日期：今天、明天、后天；支持优先级：高/中/低。
 
-### 完成任务
-```
-你：完成任务 1
-助手：✅ 已完成任务：完成项目报告
-```
+## ⚙️ 配置
 
-### 任务统计
-```
-你：任务统计
-助手：📊 任务统计：
-总任务数: 3
-待办: 2
-进行中: 0
-已完成: 1
-完成率: 33.3%
-```
-
-### 搜索任务
-```
-你：搜索任务 项目
-助手：🔍 搜索结果（共 1 个）：
-1. 🔴 [已完成] 完成项目报告
-```
-
-## ⚙️ 配置说明
-
-编辑 `config/settings.yaml`：
-
+文件：config/settings.yaml
 ```yaml
 app:
   name: "智能任务管理助手"
@@ -141,93 +132,25 @@ todo:
   store: "./data/todos.json"
 ```
 
-## 🎓 作业要求完成情况
-
-### ✅ "能说" - 自然语言对话
-- 支持中文命令式输入
-- 智能意图识别
-- 对话历史记忆
-
-### ✅ "会做" - 执行操作
-- 文件读写（任务数据持久化）
-- 数据处理（任务统计、排序）
-- 工具调用（任务管理）
-
-### ✅ MCP 兼容框架
-- 模块化工具设计
-- 标准化接口
-- 配置驱动
-
-### ✅ UI 界面
-- Streamlit Web UI（聊天界面 + 任务看板）
-- Rich CLI 命令行界面
-
-## 🔧 技术栈
-
-- **语言**：Python 3.12
-- **框架**：Pydantic（数据验证）
-- **UI**：Streamlit（Web）、Rich（CLI）
-- **配置**：PyYAML
-
-## 📝 支持的命令
-
-| 功能 | 命令示例 |
-|------|----------|
-| 添加任务 | `添加任务 [标题] 优先级[高/中/低] 截止[日期] 类别[工作/学习...]` |
-| 完成任务 | `完成任务 [ID]` |
-| 删除任务 | `删除任务 [ID]` |
-| 开始任务 | `开始任务 [ID]` |
-| 查看任务 | `查看任务`、`查看待办任务`、`查看已完成任务` |
-| 待办清单 | `待办清单`、`今日待办` |
-| 任务统计 | `任务统计`、`任务情况` |
-| 搜索任务 | `搜索任务 [关键词]` |
-
-## 🌟 高级功能
-
-### 智能日期识别
-- 支持绝对日期：`2025-10-25`
-- 支持相对日期：`今天`、`明天`、`后天`
-- 支持周期：`本周`、`下周`
-
-### 任务分类
-支持的类别：工作、学习、生活、娱乐、健康、社交、购物、其他
-
-### 优先级管理
-- 🔴 高：紧急重要任务
-- 🟡 中：一般任务
-- 🟢 低：不急任务
-
-## 📊 Web UI 功能
-
-- 💬 **对话界面**：自然语言交互
-- 📋 **任务看板**：实时显示待办和进行中的任务
-- ✅ **快速完成**：点击复选框直接完成任务
-- ➕ **快捷添加**：表单快速添加任务
-- 🔍 **智能搜索**：关键词搜索任务
-- 📊 **统计面板**：任务完成率实时统计
-
 ## 🐛 故障排除
 
-### 依赖安装失败
-```bash
+- 端口占用（Streamlit）
+```powershell
+python -m streamlit run app.py --server.port 8503
+```
+
+- 依赖安装失败
+```powershell
 pip install -r requirements.txt --upgrade
 ```
 
-### 编码问题（Windows CLI）
-在 `start_cli.bat` 开头已添加 `chcp 65001`
-
-### 端口占用
-修改 Streamlit 端口：
-```bash
-streamlit run app.py --server.port 8502
-```
+- MCP 连接报错（Inspector）
+检查 Command/Arguments 是否指向正确的 Python 与 server.py，认证应为 None。
 
 ## 📄 License
 
-MIT License - 供教学与学习使用
+MIT License（教学示例）
 
----
-
-**项目完成日期**：2025年10月21日  
-**环境**：Python 3.12 + Conda (dog)  
-**路径**：E:\agent
+——
+环境：Windows 10/11 + Conda (dog) + Python 3.12  
+更新时间：2025-10-23

@@ -12,6 +12,8 @@ import yaml
 from pydantic import BaseModel
 
 from .tools.todo_tool import TodoTool
+from .chitchat import respond as chitchat_respond
+from .mcp_client import MCPClient
 
 
 class Memory(BaseModel):
@@ -23,7 +25,7 @@ class Memory(BaseModel):
 class Agent:
     """智能任务管理助手 - 帮助用户整理任务和生成待办清单"""
     
-    def __init__(self, config_path: str = "config/settings.yaml"):
+    def __init__(self, config_path: str = "config/settings.yaml", use_mcp: bool = False, mcp_client: Optional[MCPClient] = None):
         # 加载配置
         if os.path.exists(config_path):
             with open(config_path, "r", encoding="utf-8") as f:
@@ -37,8 +39,17 @@ class Agent:
         
         os.makedirs(self.cfg["app"].get("data_dir", "./data"), exist_ok=True)
         
-        # 初始化任务管理工具
-        self.todo = TodoTool(self.cfg)
+        # 选择使用 MCP 客户端 或 直接调用 TodoTool
+        self.use_mcp = use_mcp
+        if use_mcp:
+            self.mcp_client = mcp_client
+            if not self.mcp_client:
+                from .mcp_client import get_mcp_client
+                self.mcp_client = get_mcp_client()
+            self.todo = None  # 不使用直接调用
+        else:
+            self.mcp_client = None
+            self.todo = TodoTool(self.cfg)  # 传统方式
         
         # 对话记忆
         self.memory = Memory()
@@ -65,24 +76,36 @@ class Agent:
             priority = intent.get("priority", "中")
             deadline = intent.get("deadline")
             category = intent.get("category", "工作")
-            result = self.todo.add_task(title, deadline, priority, category)
-            return result["message"]
+            
+            if self.use_mcp:
+                result = self.mcp_client.add_task(title, priority, deadline, category)
+            else:
+                result = self.todo.add_task(title, deadline, priority, category)
+            return result.get("message", str(result))
         
         # 完成任务
         if intent["name"] == "complete_task":
             task_id = intent.get("task_id")
             if task_id is None:
                 return "❌ 请提供任务ID，例如：完成任务 1"
-            result = self.todo.complete_task(int(task_id))
-            return result["message"]
+            
+            if self.use_mcp:
+                result = self.mcp_client.complete_task(int(task_id))
+            else:
+                result = self.todo.complete_task(int(task_id))
+            return result.get("message", str(result))
         
         # 删除任务
         if intent["name"] == "delete_task":
             task_id = intent.get("task_id")
             if task_id is None:
                 return "❌ 请提供任务ID，例如：删除任务 1"
-            result = self.todo.delete_task(int(task_id))
-            return result["message"]
+            
+            if self.use_mcp:
+                result = self.mcp_client.delete_task(int(task_id))
+            else:
+                result = self.todo.delete_task(int(task_id))
+            return result.get("message", str(result))
         
         # 更新任务状态
         if intent["name"] == "update_task_status":
@@ -90,13 +113,22 @@ class Agent:
             status = intent.get("status", "进行中")
             if task_id is None:
                 return "❌ 请提供任务ID"
-            result = self.todo.update_task_status(int(task_id), status)
-            return result["message"]
+            
+            if self.use_mcp:
+                result = self.mcp_client.update_task_status(int(task_id), status)
+            else:
+                result = self.todo.update_task_status(int(task_id), status)
+            return result.get("message", str(result))
         
         # 查看任务列表
         if intent["name"] == "list_tasks":
             status = intent.get("status")
-            tasks = self.todo.list_tasks(status)
+            
+            if self.use_mcp:
+                tasks = self.mcp_client.list_tasks(status)
+            else:
+                tasks = self.todo.list_tasks(status)
+                
             if not tasks:
                 status_text = f"「{status}」" if status else ""
                 return f"暂无{status_text}任务"
@@ -105,25 +137,36 @@ class Agent:
             for task in tasks:
                 priority_emoji = {"高": "🔴", "中": "🟡", "低": "🟢"}.get(task["priority"], "⚪")
                 status_tag = f"[{task['status']}]"
-                deadline_str = f" | 📅 {task['deadline']}" if task['deadline'] else ""
+                deadline_str = f" | 📅 {task['deadline']}" if task.get('deadline') else ""
                 category_str = f" | 🏷️ {task['category']}" if task.get('category') else ""
                 lines.append(f"{task['id']}. {priority_emoji} {status_tag} {task['title']}{deadline_str}{category_str}")
             return "\n".join(lines)
         
         # 生成待办清单
         if intent["name"] == "show_todo_list":
-            return self.todo.generate_todo_list()
+            if self.use_mcp:
+                return self.mcp_client.generate_todo_list()
+            else:
+                return self.todo.generate_todo_list()
         
         # 任务统计
         if intent["name"] == "task_stats":
-            return self.todo.get_statistics()
+            if self.use_mcp:
+                return self.mcp_client.get_statistics()
+            else:
+                return self.todo.get_statistics()
         
         # 搜索任务
         if intent["name"] == "search_tasks":
             keyword = intent.get("keyword", "")
             if not keyword:
                 return "❌ 请提供搜索关键词，例如：搜索任务 报告"
-            tasks = self.todo.search_tasks(keyword)
+            
+            if self.use_mcp:
+                tasks = self.mcp_client.search_tasks(keyword)
+            else:
+                tasks = self.todo.search_tasks(keyword)
+                
             if not tasks:
                 return f"未找到包含「{keyword}」的任务"
             lines = [f"🔍 搜索结果（共 {len(tasks)} 个）：\n"]
@@ -132,21 +175,17 @@ class Agent:
                 lines.append(f"{task['id']}. {priority_emoji} [{task['status']}] {task['title']}")
             return "\n".join(lines)
         
-        # 默认回复
-        return """🤖 我是智能任务管理助手，可以帮你：
-
-📋 **任务管理**
-• 添加任务 [标题] - 创建新任务
-• 完成任务 [ID] - 标记任务为已完成
-• 删除任务 [ID] - 删除指定任务
-• 查看任务 - 查看所有任务
-• 待办清单 - 生成今日待办
-
-📊 **任务查询**
-• 任务统计 - 查看任务完成情况
-• 搜索任务 [关键词] - 搜索相关任务
-
-试试说：「添加任务 完成项目报告 优先级高 截止2025-10-25」"""
+        # 默认：尝试闲聊；若未命中则给出功能性帮助
+        cc = chitchat_respond(text, self.memory.dict())
+        if cc:
+            return cc
+        return (
+            "🤖 我可以帮你管理任务，也可以和你简单聊天。\n\n"
+            "📋 任务管理：添加/完成/删除/查看\n"
+            "🧾 待办清单：说『待办清单』\n"
+            "📊 任务统计：说『任务统计』\n\n"
+            "比如：『添加任务 完成项目报告 优先级高 截止2025-10-25』"
+        )
     
     def _parse_intent(self, text: str) -> Dict[str, Any]:
         """意图识别 - 只处理任务相关"""

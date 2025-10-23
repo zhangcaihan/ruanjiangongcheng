@@ -1,0 +1,2 @@
+# Minimal extra dependency for MCP server
+mcp[cli]>=1.18.0
