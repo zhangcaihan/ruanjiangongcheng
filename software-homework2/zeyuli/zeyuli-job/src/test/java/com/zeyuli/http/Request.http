@@ -1,0 +1,221 @@
+###
+GET http://localhost:10086/chat?input=说一声你好世界
+
+###
+POST http://localhost:8080/user/login
+Content-Type: application/json
+
+{
+  "userName": "admin",
+  "password": "f969248d621bcded4a3582a1c3b17a71eedfefa9120c36ee3bd1957438cd55b9",
+  "loginType": "ACCOUNT_SECRET_LOGIN"
+}
+
+###
+POST http://106.15.90.163:8080/user/cacheTravelInfo?
+    token = eyJ6aXAiOiJHWklQIiwiYWxnIjoiSFM1MTIifQ.H4sIAAAAAAAA_xXKSw6AIAwA0bt07cIWyu8Q3qEKJi4wRIKaGO8uLmfyHqhthgDaeo8KR0ElWowVZm0jzpRc9EYjDNBqOibJqWuJedv7Klc8ey60Ev0k3QUCWsPGOSb1fvXHAiReAAAA.cAtjqQPha582paAa82SA4F4_7WVJMJaDIIOo9YL8zenygySeNxn8Xg7DvCGEkg5CoS1LgZKRNTJt68tQpTX8xQ
+Content-Type: application/json
+
+{
+  "itinerary": {
+    "days": [
+      {
+        "dayIndex": 1,
+        "date": "2025-12-13",
+        "label": "成都文化初体验",
+        "items": [
+          {
+            "time": "09:00-12:00",
+            "title": "参观武侯祠",
+            "description": "探索三国文化，参观诸葛亮祠庙，了解蜀汉历史。",
+            "attractions": "武侯祠",
+            "cost": "门票约60元",
+            "durationHours": 3
+          },
+          {
+            "time": "13:00-16:00",
+            "title": "游览锦里古街",
+            "description": "漫步古街，体验传统川西民俗文化，品尝小吃。",
+            "attractions": "锦里古街",
+            "cost": "免费",
+            "durationHours": 3
+          },
+          {
+            "time": "17:00-19:00",
+            "title": "观看川剧变脸表演",
+            "description": "在剧院欣赏传统川剧，包括变脸、吐火等绝技。",
+            "attractions": "川剧剧院",
+            "cost": "表演门票约100元",
+            "durationHours": 2
+          }
+        ]
+      },
+      {
+        "dayIndex": 2,
+        "date": "2025-12-14",
+        "label": "历史与艺术之旅",
+        "items": [
+          {
+            "time": "09:00-12:00",
+            "title": "参观杜甫草堂",
+            "description": "探访唐代诗人杜甫故居，感受古典文学氛围。",
+            "attractions": "杜甫草堂",
+            "cost": "门票约50元",
+            "durationHours": 3
+          },
+          {
+            "time": "13:00-16:00",
+            "title": "游览宽窄巷子",
+            "description": "体验清代街区风貌，参观艺术画廊和手工艺品店。",
+            "attractions": "宽窄巷子",
+            "cost": "免费",
+            "durationHours": 3
+          },
+          {
+            "time": "17:00-19:00",
+            "title": "品尝成都火锅",
+            "description": "在当地知名火锅店体验麻辣美食文化。",
+            "attractions": "火锅餐厅",
+            "cost": "人均约80元",
+            "durationHours": 2
+          }
+        ]
+      },
+      {
+        "dayIndex": 3,
+        "date": "2025-12-15",
+        "label": "宗教与民俗探索",
+        "items": [
+          {
+            "time": "09:00-12:00",
+            "title": "参观青羊宫",
+            "description": "探访道教宫观，了解道教文化和建筑艺术。",
+            "attractions": "青羊宫",
+            "cost": "门票约10元",
+            "durationHours": 3
+          },
+          {
+            "time": "13:00-16:00",
+            "title": "游览文殊院",
+            "description": "参观佛教寺庙，体验宁静的禅意氛围。",
+            "attractions": "文殊院",
+            "cost": "免费",
+            "durationHours": 3
+          },
+          {
+            "time": "17:00-19:00",
+            "title": "体验茶馆文化",
+            "description": "在传统茶馆品茶，听评书，感受老成都生活。",
+            "attractions": "老茶馆",
+            "cost": "人均约30元",
+            "durationHours": 2
+          }
+        ]
+      },
+      {
+        "dayIndex": 4,
+        "date": "2025-12-16",
+        "label": "现代与传统融合",
+        "items": [
+          {
+            "time": "09:00-12:00",
+            "title": "参观成都博物馆",
+            "description": "了解成都从古至今的历史文化发展。",
+            "attractions": "成都博物馆",
+            "cost": "免费",
+            "durationHours": 3
+          },
+          {
+            "time": "13:00-16:00",
+            "title": "游览太古里",
+            "description": "探索现代商业区与传统建筑的结合，购物休闲。",
+            "attractions": "太古里",
+            "cost": "免费",
+            "durationHours": 3
+          },
+          {
+            "time": "17:00-19:00",
+            "title": "告别晚餐",
+            "description": "在特色餐厅享用最后一餐，回顾旅程。",
+            "attractions": "餐厅",
+            "cost": "人均约100元",
+            "durationHours": 2
+          }
+        ]
+      }
+    ]
+  }
+}
+
+###
+GET http://localhost:8080/user/getTravelInfo?
+    token=eyJ6aXAiOiJHWklQIiwiYWxnIjoiSFM1MTIifQ.H4sIAAAAAAAA_xXKTQqAIBBA4bvMuoXjvx6iO4w5QQtDEiuI7p4t3-N7oPUEEbQLARUKQkWarCNjtMuYJPscrEaYoDc-Zio8NOWy7WPVK58jF7lK-RO-K0R01lgRvPHvB7t74OFeAAAA.LiiamimZWNQ6jkSaBpmXjkyRsvqWrzTOn7A2H5WakPid3o0d_0CviiJtqv4uActRk0CBbq_b_UCPNxSA0mUvCw
+
+###
+GET http://localhost:8080/deekseek/planItinerary?
+    token=eyJ6aXAiOiJHWklQIiwiYWxnIjoiSFM1MTIifQ.H4sIAAAAAAAA_xXKwQ2AIAxA0V169mCBgmUIdyiCiQcMkaAmxt3F4_95D9QWwINxzKhxFNRixDohMi5iUGmKbA3CAK2mY5acupaYt72vcsWz56JWpX6S7gIenSViq5neDxen4h5eAAAA.7zLvlvBpc8rzcx7Sh3WyPtXjiktn0rNtAnlGyQoibAceJ-bZsoqMrU4gyFJ5SyJsQRNkqkjqa0KFoRy_AIVJVA
+    &startCity=北京&endCity=上海&startDate=2025-07-01&endDate=2025-07-05&userInput=上海三日游
+
+###
+POST http://localhost:8080/deekseek/formatUserInput
+Content-Type: application/json
+
+{
+  "markdown": "# 北京到上海五日游详细攻略 (2025年7月1日-7月5日)## 🌤️ 基础信息**出发地天气参考**北京7月初已进入盛夏，平均气温25-32°C，天气炎热干燥，午后偶有雷阵雨。建议携带：- 透气夏装、防晒衣、遮阳帽、太阳镜- 晴雨两用伞、便携小风扇- 保湿护肤品（北京较干燥）**目的地天气参考***（基于上海7月历史气候数据，实际请出行前3天查实时预报）*上海7月处于梅雨季尾声，闷热潮湿：- 平均气温：27-34°C，体感温度常超35°C- 湿度：70%-85%，午后易有阵雨- 建议：每日关注“上海发布”公众号天气预警，备好雨具、防蚊液、换洗衣物**两地交通方案**1. **北京→上海（推荐高铁）**- 班次：G1-G28系列（最快约4小时18分）- 建议车次：G1（09:00北京南→13:18上海虹桥）- 购票：提前14天“铁路12306”APP购票，选“靠窗A/F座”可观景- 虹桥站到达后：地铁2号线直达市中心（南京东路约25分钟）2. **备选方案**- 飞机：首都机场→浦东机场（约2小时），但需提前2小时值机+机场往返时间- 自驾：约1200公里（不推荐，耗时且上海外牌限行）## 🏙️ 目的地特色**经济消费水平参考**- 餐饮：人均80-150元（普通餐厅），本帮菜馆人均150-300元- 交通：地铁单程3-7元，出租车起步价16元（夜间加价）- 景点门票：大部分50-150元，东方明珠二球联票199元- *省钱贴士：使用“Metro大都会”APP乘地铁，部分景点周二半价***上海十大必去景点**1. **外滩**（免费） - 万国建筑群夜景（亮灯时间：19:00-22:00）2. **陆家嘴**（免费） - 上海中心118层观光厅（门票180元）3. **豫园+城隍庙**（豫园40元，城隍庙10元） - 明清园林与小吃街4. **南京东路步行街**（免费） - 百年商业街，打卡mm豆旗舰店5. **武康路-安福路**（免费） - 梧桐区文艺漫步，武康大楼必拍6. **上海博物馆**（免费需预约） - 青铜馆、书画馆镇馆之宝7. **迪士尼乐园**（常规日599元） - 建议单独安排1整天8. **田子坊**（免费） - 石库门创意巷弄，买特色伴手礼9. **朱家角古镇**（免费，部分景点收费） - 地铁17号线直达，体验水乡10. **1933老场坊**（免费） - 《小时代》取景地，工业风摄影圣地**特色美食指南**- **本帮菜必吃**：红烧肉、响油鳝糊、腌笃鲜、草头圈子- 推荐老字号：老正兴菜馆（福州路）、上海老饭店（豫园）- **小吃集中地**：- 城隍庙：南翔馒头店（小笼包）、绿波廊（点心）- 黄河路：国际饭店西饼屋（蝴蝶酥）- 云南南路：鲜得来（排骨年糕）、大壶春（生煎）- **早餐体验**：- 弄堂“四大金刚”：大饼、油条、粢饭糕、豆浆- 推荐：曹家渡点心店、健康夜市大饼油条## 📅 行程规划**住宿推荐区域**- **性价比首选**：南京东路/人民广场附近- 优势：地铁1/2/8号线交汇，步行至外滩15分钟- 参考：全季酒店（南京东路店）、如家商旅（人民广场店）- **文艺青年优选**：静安寺/陕西南路附近- 优势：靠近梧桐区，咖啡馆、买手店密集- 参考：citigo欢阁酒店（静安店）**购物攻略**- **特色商品**：- 食品：哈尔滨食品厂蝴蝶酥、邵万生黄泥螺、沈大成青团- 文创：武康大楼文创雪糕、朵云书院旗舰店限定书签- 服饰：长乐路独立设计师店、APITA日本超市（日系杂货）- **购物中心**：- 高端：恒隆广场、国金中心IFC- 平价：环球港、美罗城（二次元主题店）### 🗺️ 每日详细路线**Day1（7月1日 周二）**- 上午：北京南站乘G1高铁→上海虹桥（13:18到达）- 下午：地铁至酒店入住→步行至**南京东路**（体验叮叮车）→**外滩**观日景- 傍晚：外滩→金陵东路渡口乘**2元轮渡**至陆家嘴- 晚上：陆家嘴环形天桥拍“三件套”夜景→正大广场用餐- *天气参考：多云转阵雨，28-33°C，傍晚备伞***Day2（7月2日 周三）**- 上午：**豫园**（园林游览1.5小时）→**城隍庙**小吃街午餐- 下午：地铁10号线至**新天地**（石库门改造区）→步行至**田子坊**- 晚上：**思南公馆**街区晚餐→复兴中路散步赏老洋房- *天气参考：雷阵雨，27-32°C，建议上午逛园避雨***Day3（7月3日 周四）**- 全天：**迪士尼乐园**（7:30前到安检口，利用APP抢预约卡）- 必玩：创极速光轮、飞跃地平线、晚上烟花秀（20:30开始）- *贴士：自带水杯园内可接水，穿舒适运动鞋*- *天气参考：晴转多云，28-34°C，注意防晒***Day4（7月4日 周五）**- 上午：**武康路**（武康大楼拍照）→**安福路**（逛多抓鱼循环商店）- 中午：乌鲁木齐中路Brunch（推荐Alimentari意大利餐厅）- 下午：地铁至**上海博物馆**（提前预约）→人民广场喂鸽子- 晚上：**苏州河畔**散步（浙江路桥至外白渡桥段）→四川北路老字号晚餐- *天气参考：多云，27-33°C，午后闷热可安排室内活动***Day5（7月5日 周六）**- 上午：退房寄存行李→**静安寺**（外观）→逛愚园路历史街区- 中午：虹桥机场/火车站附近最后一餐（推荐虹桥天地购物中心）- 下午：根据返程时间灵活安排，建议提前2小时到达交通枢纽- *返程推荐高铁：G6（14:00上海虹桥→18:22北京南）*- *天气参考：阵雨，26-31°C，提前出发防交通延误*## ⚠️ 实用提醒1. **防暑防雨**：7月上海“蒸笼天”频繁，随身带藿香正气水2. **交通避峰**：地铁早高峰7:30-9:00尽量避开1/2/8号线3. **门票预约**：上海博物馆、迪士尼等务必提前官方渠道预约4. **方言趣学**：学句上海话“谢谢侬”（谢谢你）更接地气祝您在上海度过一个充满海派风情的假期！若有其他需求，随时告诉我哦~ 🎉",
+  "startCity": "北京",
+  "endCity": "上海",
+  "startDate": "2025-07-01",
+  "endDate": "2025-07-05",
+  "token": "eyJ6aXAiOiJHWklQIiwiYWxnIjoiSFM1MTIifQ.H4sIAAAAAAAA_xWLQQ6AIAzA_rKzBzcGCI_wD0Mw8YAhEtTE-Hfx2KZ9oLYAHtg6hwpHQSUsxorWbCMGSlN0hhEGaDUds-TUa4l527sqVzw7LrQS_Um6C3i0Rmvi_r8fuapgEV4AAAA.iitfVba4puAoXuw5ffLJCzSLOE8Xl9JgdbmSStSxdy1-fEpFnDyprR7IF4bYvqrykI4NKK2Oz3MpZ3PPcP7C_w"
+}
+
+
+###
+GET http://localhost:8080/map/center?location=南京南站
+
+###
+GET http://localhost:8080/map/search-locations?query=探险乐园&region=福州&count=10
+
+###
+GET http://localhost:8080/map/route?origin=南京南站&destination=南京市秦淮区扇骨营小区&mode=driving
+
+###
+GET http://localhost:8080/map/surrounding-pois?location=118.796786,31.970968&radius=200000&types=70701
+
+###
+GET http://localhost:8080/map/poi-details-list
+
+###
+GET http://localhost:8080/map/screenshot?center=118.796786,31.970968&zoom=15&width=1000&height=1000
+
+###
+GET http://localhost:8080/map/weather?cityCode=320100
+
+###
+GET http://localhost:8080/map/city-code?cityName=南京
+
+###
+GET http://localhost:8080/map/address-by-location?lat=118.796786&lng=31.970968
+
+###
+GET http://localhost:8080/map/distance?origin=118.796786,31.970968&destination=118.801196,32.021518
+
+###
+GET http://localhost:8080/map/poi-details/poiId=B0FFFAB6J2
+
+###
+GET http://localhost:8080/map/attractions-by-city?city=南京&page=1&pageSize=10
+
+
+###
+POST http://localhost:8080/personality-test/calculate-result
+Content-Type: application/json
+
+{
+  "token": "eyJ6aXAiOiJHWklQIiwiYWxnIjoiSFM1MTIifQ.H4sIAAAAAAAA_xXKwQ2AIAxA0V169kChFGEId6iCiQcMkaAmxt3F4_95D9Q2QwBy3qNBJWiEhJ1YSy7irNMYPRPCAK2mY5KcupaYt72vcsWz56JXrX-S7gIBHVtGRWzfD8O1ktpeAAAA.fStYZRI_KOZhDFohqGwJt7KQnrTGtyY8qgaY8zGWJTKgEpO4KtKWr-AY4auyK_F7PL2RV4JCUsrg0T80yp-jKg",
+  "Q1": "Q1C",
+  "Q2": "Q2D",
+  "Q3": "Q3D",
+  "Q4": "Q4B",
+  "Q5": "Q5C"
+}

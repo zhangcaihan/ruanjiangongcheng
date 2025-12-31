@@ -1,0 +1,10 @@
+# 项目排除路径
+/zeyuli/zeyuli-job/target/
+/zeyuli/front/node_modules/
+/zeyuli/front/dist/
+/.idea/
+/zeyuli/zeyuli-job/src/main/resources/static/assets/
+/zeyuli/zeyuli-job/src/main/resources/application.yaml
+/zeyuli/zeyuli-job/src/main/resources/application-prod.yaml
+/zeyuli/zeyuli-job/src/main/resources/application-dev.yaml
+/node_modules/

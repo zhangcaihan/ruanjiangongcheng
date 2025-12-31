@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!--namespace: 命名空间，用于区分不同的mapper-->
+<mapper namespace="com.zeyuli.mappers.UserMapper">
+    <!--声明sql语句-->
+    <!--注意Mapper.xml文件中引用的方法不能重载，否则会报错-->
+    <select id="login"
+    resultType="com.zeyuli.pojo.User">
+        SELECT id, user_name, password
+        FROM users
+        WHERE user_name = #{userName} AND password = #{password}
+    </select>
+
+    <insert id="register">
+        INSERT INTO users (id, user_name, password)
+        VALUES (#{id}, #{username}, #{password})
+    </insert>
+
+    <select id="selectUserInfo">
+        SELECT id, user_name, password
+        FROM users
+        WHERE id = #{id}
+    </select>
+
+    <update id="updateUserInfo">
+        UPDATE users
+        SET personality_type=#{result}
+        WHERE id = #{id}
+    </update>
+</mapper>
+

@@ -1,0 +1,316 @@
+/* 全局样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body, #app {
+    height: 100%;
+    width: 100%;
+    overflow: hidden; /* 防止双重滚动条 */
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+/* 响应式布局断点 */
+@media (max-width: 768px) {
+    /* 移动端样式 */
+    .container {
+        padding: 0 16px;
+    }
+}
+
+@media (min-width: 769px) {
+    /* PC端样式 */
+    .container {
+        padding: 0 24px;
+    }
+}
+
+/* 通用容器样式 */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 卡片样式 */
+.card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+/* 按钮样式 */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background-color: #1890ff;
+    color: white;
+    position: relative;
+    margin-left: 40.3%;
+}
+
+.btn-primary:hover {
+    background-color: #40a9ff;
+}
+
+.btn-secondary {
+    background-color: white;
+    color: #1890ff;
+    border: 1px solid #1890ff;
+}
+
+.btn-secondary:hover {
+    background-color: #f0f5ff;
+}
+
+.btn-text {
+    background: none;
+    color: #1890ff;
+    border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-text:hover {
+    color: #40a9ff;
+    background-color: #f0f5ff;
+    border-radius: 4px;
+}
+
+/* 输入框样式 */
+.input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.2s;
+    outline: none;
+}
+
+.input:focus {
+    border-color: #1890ff;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* 表单样式 */
+.form-item {
+    margin-bottom: 16px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* 布局组件 */
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.gap-2 {
+    gap: 8px;
+}
+
+.gap-3 {
+    gap: 12px;
+}
+
+.gap-4 {
+    gap: 16px;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+/* 间距 */
+.mb-2 {
+    margin-bottom: 8px;
+}
+
+.mb-3 {
+    margin-bottom: 12px;
+}
+
+.mb-4 {
+    margin-bottom: 16px;
+}
+
+.mb-6 {
+    margin-bottom: 24px;
+}
+
+.mt-2 {
+    margin-top: 8px;
+}
+
+.mt-3 {
+    margin-top: 12px;
+}
+
+.mt-4 {
+    margin-top: 16px;
+}
+
+.mt-6 {
+    margin-top: 24px;
+}
+
+/* 文本样式 */
+.text-center {
+    text-align: center;
+}
+
+.text-sm {
+    font-size: 14px;
+}
+
+.text-lg {
+    font-size: 18px;
+}
+
+.text-xl {
+    font-size: 20px;
+}
+
+.text-2xl {
+    font-size: 24px;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.font-medium {
+    font-weight: 500;
+}
+
+.text-gray-600 {
+    color: #666;
+}
+
+.text-gray-500 {
+    color: #999;
+}
+
+.text-blue-500 {
+    color: #1890ff;
+}
+
+.text-orange-500 {
+    color: #fa8c16;
+}
+
+.text-green-500 {
+    color: #52c41a;
+}
+
+/* 导航栏样式 */
+.header {
+    height: 64px;
+    background: white;
+    border-bottom: 1px solid #e8e8e8;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+}
+
+/* 侧边栏样式 */
+.sidebar {
+    width: 240px;
+    background: white;
+    border-right: 1px solid #e8e8e8;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sidebar-item:hover {
+    background: #f0f5ff;
+}
+
+.sidebar-item.active {
+    background: #e6f7ff;
+    color: #1890ff;
+    border-right: 3px solid #1890ff;
+}
+
+/* 主内容区样式 */
+.main-content {
+    /*margin-left: 10px;*/
+    min-height: 100vh;
+    background: #f5f5f5;
+}
+
+/* 内容区域样式 */
+.content-area {
+    padding: 24px;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+}

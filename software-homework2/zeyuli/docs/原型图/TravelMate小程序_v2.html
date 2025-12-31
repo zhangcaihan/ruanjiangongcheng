@@ -1,0 +1,718 @@
+
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TravelMate小程序原型 - 2025年11月20日</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .card-shadow { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .page-container { width: 375px; height: 812px; background: white; border-radius: 12px; border: 1px solid #E8E8E8; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none; }
+    .page-container.active { display: flex; flex-direction: column; }
+    .nav-bar { height: 56px; border-bottom: 1px solid #E8E8E8; display: flex; align-items: center; padding: 0 20px; }
+    .content-area { height: 676px; overflow-y: auto; padding: 24px 20px; }
+    .action-bar { height: 80px; border-top: 1px solid #E8E8E8; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 0 20px; }
+    .btn-primary { background-color: #1890FF; color: white; height: 44px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-secondary { background-color: white; color: #1890FF; border: 1px solid #1890FF; height: 44px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
+    .btn-secondary:hover { opacity: 0.9; }
+    .btn-text { background: none; color: #1890FF; border: none; cursor: pointer; text-decoration: underline; }
+    .form-input { width: 100%; padding: 12px 16px; border: 1px solid #D9D9D9; border-radius: 8px; font-size: 14px; }
+    .form-input:focus { outline: none; border-color: #1890FF; }
+  </style>
+</head>
+<body class="bg-gray-100 flex flex-wrap justify-center p-[35px] gap-[35px]">
+<!-- 页面1: 登录页面 -->
+<div class="page-container active" id="page-login">
+<!-- 导航栏 -->
+<div class="nav-bar">
+<div class="font-bold text-blue-500 text-xl">TravelMate</div>
+</div>
+<!-- 内容区 -->
+<div class="content-area flex flex-col">
+<div class="text-center mb-8">
+<h1 class="text-2xl font-bold mb-2">欢迎使用TravelMate</h1>
+<p class="text-gray-600">智能旅行规划助手</p>
+</div>
+<form class="flex-1">
+<div class="mb-4">
+<input type="tel" class="form-input w-full" placeholder="请输入手机号" required/>
+</div>
+<div class="mb-4">
+<input type="password" class="form-input w-full" placeholder="请输入密码" required/>
+</div>
+<div class="mb-6 flex gap-2">
+<input type="text" class="form-input flex-1" placeholder="验证码"/>
+<button type="button" class="btn-secondary px-4">发送验证码</button>
+</div>
+<div class="mb-6 flex gap-3">
+<button type="button" class="flex-1 py-2 border border-blue-500 text-blue-500 rounded-lg text-sm">微信登录</button>
+<button type="button" class="flex-1 py-2 border border-blue-500 text-blue-500 rounded-lg text-sm">QQ登录</button>
+</div>
+<div class="text-center text-sm">
+<span class="text-gray-600">没有账户？</span>
+<button type="button" class="btn-text" onclick="showPage('page-register')">立即注册</button>
+</div>
+</form>
+</div>
+<!-- 操作区 -->
+<div class="action-bar justify-between">
+<button type="button" class="btn-text">忘记密码</button>
+<button type="button" class="btn-primary px-12" onclick="showPage('page-home')">登录</button>
+</div>
+</div>
+
+<!-- 页面2: 注册页面 -->
+<div class="page-container" id="page-register">
+<!-- 导航栏 -->
+<div class="nav-bar">
+<button type="button" class="btn-text mr-4" onclick="showPage('page-login')">
+<span class="iconify" data-icon="mdi:arrow-left"></span>
+</button>
+<div class="font-bold text-lg">注册账户</div>
+</div>
+<!-- 内容区 -->
+<div class="content-area overflow-auto">
+<form class="space-y-4">
+<div>
+<input type="tel" class="form-input" placeholder="手机号" required/>
+</div>
+<div>
+<input type="password" class="form-input" placeholder="设置密码" required/>
+</div>
+<div>
+<input type="password" class="form-input" placeholder="确认密码" required/>
+</div>
+<div>
+<input type="text" class="form-input" placeholder="昵称" required/>
+</div>
+<div>
+<input type="text" class="form-input" placeholder="验证码"/>
+</div>
+<div class="flex gap-2 text-sm">
+<input type="checkbox" id="agree-terms" required/>
+<label for="agree-terms" class="text-gray-600">我同意<span class="text-blue-500 cursor-pointer">服务协议</span>和<span class="text-blue-500 cursor-pointer">隐私政策</span></label>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-medium">选择身份</label>
+<div class="space-y-2">
+<label class="flex items-center"><input type="radio" name="identity" value="student" class="mr-2"/> 学生</label>
+<label class="flex items-center"><input type="radio" name="identity" value="worker" class="mr-2"/> 上班族</label>
+<label class="flex items-center"><input type="radio" name="identity" value="other" class="mr-2"/> 其他</label>
+</div>
+</div>
+</form>
+</div>
+<!-- 操作区 -->
+<div class="action-bar">
+<button type="button" class="btn-secondary px-12" onclick="showPage('page-login')">返回登录</button>
+<button type="button" class="btn-primary px-12" onclick="showPage('page-home')">注册</button>
+</div>
+</div>
+
+<!-- 页面3: 对话输入页面（首页）-->
+<div class="page-container" id="page-home">
+<!-- 导航栏 -->
+<div class="nav-bar justify-between">
+<div class="font-bold text-blue-500 text-xl">TravelMate</div>
+<div class="flex gap-4">
+<button type="button" class="btn-text" onclick="showPage('page-profile')">
+<span class="iconify" data-icon="mdi:menu"></span>
+</button>
+</div>
+</div>
+<!-- 内容区 -->
+<div class="content-area">
+<div class="text-center mb-8">
+<h1 class="text-2xl font-bold mb-2">智能规划您的完美旅程</h1>
+<p class="text-gray-600">告诉我您的旅行需求，3步生成专属行程</p>
+</div>
+<div class="flex justify-center mb-8">
+<div class="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center">
+<span class="iconify text-blue-500 text-5xl" data-icon="mdi:map-marker-multiple"></span>
+</div>
+</div>
+<div class="bg-gray-50 rounded-xl p-4 mb-6">
+<textarea class="w-full h-32 bg-transparent text-gray-700 resize-none outline-none" placeholder="例如：'上海三日游，2000元预算，喜欢美食和艺术'"></textarea>
+</div>
+<div class="flex gap-2 flex-wrap mb-6">
+<button type="button" class="px-3 py-2 border border-blue-500 text-blue-500 rounded-full text-sm hover:bg-blue-50">北京三日游 1500元</button>
+<button type="button" class="px-3 py-2 border border-blue-500 text-blue-500 rounded-full text-sm hover:bg-blue-50">杭州两日游 美食之旅</button>
+<button type="button" class="px-3 py-2 border border-blue-500 text-blue-500 rounded-full text-sm hover:bg-blue-50">成都四日游 文化体验</button>
+</div>
+<h3 class="font-bold mb-3 text-sm">最近规划</h3>
+<div class="space-y-2 max-h-32 overflow-y-auto hide-scrollbar">
+<div class="p-3 bg-gray-50 rounded-lg text-sm cursor-pointer hover:bg-gray-100" onclick="showPage('page-result')">
+<div class="font-medium">北京文化三日游</div>
+<div class="text-gray-600">3天 · ¥1560</div>
+</div>
+<div class="p-3 bg-gray-50 rounded-lg text-sm cursor-pointer hover:bg-gray-100">
+<div class="font-medium">杭州西湖两日游</div>
+<div class="text-gray-600">2天 · ¥980</div>
+</div>
+</div>
+</div>
+<!-- 操作区 -->
+<div class="action-bar">
+<button type="button" class="btn-primary px-12" onclick="showPage('page-result')">开始规划</button>
+</div>
+</div>
+
+<!-- 页面4: 行程生成结果页面 -->
+<div class="page-container" id="page-result">
+<!-- 导航栏 -->
+<div class="nav-bar justify-between">
+<button type="button" class="btn-text" onclick="showPage('page-home')">
+<span class="iconify" data-icon="mdi:arrow-left"></span>
+</button>
+<div class="font-bold text-lg">您的行程</div>
+<button type="button" class="btn-text">
+<span class="iconify" data-icon="mdi:share"></span>
+</button>
+</div>
+<!-- 内容区 -->
+<div class="content-area overflow-auto">
+<div class="pb-4 border-b border-gray-100">
+<h2 class="text-lg font-bold mb-2">北京文化三日游</h2>
+<div class="flex text-gray-600 text-sm">
+<span>3天 · 预算: ¥1560</span>
+</div>
+</div>
+<div class="flex border-b border-gray-100">
+<button type="button" class="flex-1 py-3 text-center font-medium border-b-2 border-blue-500 text-blue-500 text-sm">第1天</button>
+<button type="button" class="flex-1 py-3 text-center text-gray-500 text-sm">第2天</button>
+<button type="button" class="flex-1 py-3 text-center text-gray-500 text-sm">第3天</button>
+</div>
+<div class="py-4 space-y-4">
+<div class="flex gap-3">
+<div class="w-12 text-gray-500 text-sm flex-shrink-0">09:00</div>
+<div class="flex-1">
+<div class="p-3 bg-gray-50 rounded-lg">
+<h3 class="font-medium text-sm">故宫博物院</h3>
+<p class="text-xs text-gray-600 mt-1">参观紫禁城，感受明清历史</p>
+<div class="text-orange-500 mt-2 font-medium">¥60</div>
+</div>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="w-12 text-gray-500 text-sm flex-shrink-0">12:30</div>
+<div class="flex-1">
+<div class="p-3 bg-gray-50 rounded-lg">
+<h3 class="font-medium text-sm">四季民福烤鸭</h3>
+<p class="text-xs text-gray-600 mt-1">品尝地道北京烤鸭</p>
+<div class="text-orange-500 mt-2 font-medium">¥120</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-gray-100">
+<h3 class="font-bold mb-3 text-sm">预算分解</h3>
+<div class="flex justify-center mb-4">
+<div class="w-32 h-32" id="chart1"></div>
+</div>
+<div class="space-y-2 text-sm">
+<div class="flex justify-between">
+<span>门票</span>
+<span class="text-orange-500 font-medium">¥320</span>
+</div>
+<div class="flex justify-between">
+<span>餐饮</span>
+<span class="text-orange-500 font-medium">¥640</span>
+</div>
+<div class="flex justify-between">
+<span>交通</span>
+<span class="text-orange-500 font-medium">¥100</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 操作区 -->
+<div class="action-bar justify-between">
+<button type="button" class="btn-text text-sm" onclick="showPage('page-edit')">编辑行程</button>
+<button type="button" class="btn-primary px-6" onclick="showPage('page-home')">保存</button>
+<button type="button" class="btn-secondary px-4">重新生成</button>
+</div>
+</div>
+
+<!-- 页面5: 地图视图页面 -->
+<div class="page-container" id="page-map">
+<!-- 导航栏 -->
+<div class="nav-bar justify-between">
+<button type="button" class="btn-text" onclick="showPage('page-result')">
+<span class="iconify" data-icon="mdi:arrow-left"></span>
+</button>
+<div class="font-bold text-lg">地图视图</div>
+<button type="button" class="btn-text" onclick="showPage('page-result')">
+<span class="iconify" data-icon="mdi:view-list"></span>
+</button>
+</div>
+<!-- 内容区 -->
+<div class="content-area relative p-0 overflow-hidden">
+<div class="w-full h-full bg-gradient-to-br from-blue-100 to-green-100 flex items-center justify-center">
+<div class="text-center">
+<span class="iconify text-6xl text-blue-500 mb-4 block" data-icon="mdi:map"></span>
+<p class="text-gray-600">北京行程地图</p>
+<p class="text-sm text-gray-500 mt-2">总距离: 12.5km</p>
+<p class="text-sm text-gray-500">预计交通时间: 45分钟</p>
+</div>
+</div>
+<div class="absolute top-4 left-4 bg-white p-2 rounded-lg shadow-md text-xs font-medium">
+1. 故宫博物院
+</div>
+<div class="absolute top-32 right-8 bg-white p-2 rounded-lg shadow-md text-xs font-medium">
+2. 四季民福烤鸭
+</div>
+</div>
+<!-- 操作区 -->
+<div class="action-bar">
+<button type="button" class="btn-primary flex items-center justify-center gap-2 px-8">
+<span class="iconify" data-icon="mdi:navigation"></span>
+导航
+</button>
+</div>
+</div>
+
+<!-- 页面6: 编辑调整页面 -->
+<div class="page-container" id="page-edit">
+<!-- 导航栏 -->
+<div class="nav-bar justify-between">
+<button type="button" class="btn-text" onclick="showPage('page-result')">
+<span class="iconify" data-icon="mdi:arrow-left"></span>
+</button>
+<div class="font-bold text-lg">编辑行程</div>
+<div class="flex gap-3">
+<button type="button" class="btn-text">
+<span class="iconify" data-icon="mdi:undo"></span>
+</button>
+<button type="button" class="btn-text">
+<span class="iconify" data-icon="mdi:redo"></span>
+</button>
+</div>
+</div>
+<!-- 内容区 -->
+<div class="content-area overflow-auto">
+<div class="space-y-3 mb-6">
+<div class="p-3 bg-gray-100 rounded-lg cursor-move hover:bg-gray-200 transition">
+<div class="flex justify-between items-center">
+<div>
+<h3 class="font-medium text-sm">故宫博物院</h3>
+<div class="text-orange-500 mt-1 text-sm">¥60</div>
+</div>
+<span class="iconify text-gray-500" data-icon="mdi:drag-vertical"></span>
+</div>
+</div>
+<div class="p-3 bg-gray-100 rounded-lg cursor-move hover:bg-gray-200 transition">
+<div class="flex justify-between items-center">
+<div>
+<h3 class="font-medium text-sm">四季民福烤鸭</h3>
+<div class="text-orange-500 mt-1 text-sm">¥120</div>
+</div>
+<span class="iconify text-gray-500" data-icon="mdi:drag-vertical"></span>
+</div>
+</div>
+</div>
+<h3 class="font-bold mb-3 text-sm">替换推荐</h3>
+<div class="grid grid-cols-2 gap-3 mb-6">
+<div class="p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition text-sm">
+<h4 class="font-medium">全聚德烤鸭</h4>
+<p class="text-xs text-gray-600 mt-1">百年老字号烤鸭店</p>
+<div class="text-orange-500 mt-2">¥110</div>
+</div>
+<div class="p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition text-sm">
+<h4 class="font-medium">大董烤鸭</h4>
+<p class="text-xs text-gray-600 mt-1">创新风味烤鸭</p>
+<div class="text-orange-500 mt-2">¥150</div>
+</div>
+</div>
+<div class="p-4 bg-orange-50 rounded-lg text-sm text-center font-medium">
+预算变化: <span class="text-orange-500">¥1560</span> → <span class="text-green-500">¥1550</span>
+</div>
+</div>
+<!-- 操作区 -->
+<div class="action-bar gap-4">
+<button type="button" class="btn-secondary px-8" onclick="showPage('page-result')">取消</button>
+<button type="button" class="btn-primary px-8" onclick="showPage('page-result')">确认修改</button>
+</div>
+</div>
+
+<!-- 页面7: 预算管理页面 -->
+<div class="page-container" id="page-budget">
+<!-- 导航栏 -->
+<div class="nav-bar justify-between">
+<button type="button" class="btn-text" onclick="showPage('page-home')">
+<span class="iconify" data-icon="mdi:arrow-left"></span>
+</button>
+<div class="font-bold text-lg">预算管理</div>
+<button type="button" class="btn-text">
+<span class="iconify" data-icon="mdi:filter"></span>
+</button>
+</div>
+<!-- 内容区 -->
+<div class="content-area overflow-auto">
+<div class="bg-blue-50 p-4 rounded-lg mb-4">
+<div class="text-sm text-gray-600 mb-1">总预算</div>
+<div class="text-3xl font-bold text-blue-500">¥1560</div>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-6">
+<div class="bg-green-50 p-3 rounded-lg text-center">
+<div class="text-xs text-gray-600">已支出</div>
+<div class="text-xl font-bold text-green-500">¥850</div>
+</div>
+<div class="bg-orange-50 p-3 rounded-lg text-center">
+<div class="text-xs text-gray-600">剩余预算</div>
+<div class="text-xl font-bold text-orange-500">¥710</div>
+</div>
+</div>
+<h3 class="font-bold mb-3 text-sm">分类明细</h3>
+<div class="space-y-2 mb-6">
+<div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+<span class="text-sm">交通</span>
+<span class="text-orange-500 font-medium">¥200</span>
+</div>
+<div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+<span class="text-sm">住宿</span>
+<span class="text-orange-500 font-medium">¥500</span>
+</div>
+<div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+<span class="text-sm">餐饮</span>
+<span class="text-orange-500 font-medium">¥640</span>
+</div>
+<div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+<span class="text-sm">景点门票</span>
+<span class="text-orange-500 font-medium">¥320</span>
+</div>
+</div>
+<h3 class="font-bold mb-3 text-sm">支出明细</h3>
+<div class="space-y-2 text-sm">
+<div class="flex justify-between items-center p-2">
+<div>
+<div class="font-medium">北京地铁卡</div>
+<div class="text-gray-500">11月20日</div>
+</div>
+<span class="text-orange-500">¥100</span>
+</div>
+<div class="flex justify-between items-center p-2">
+<div>
+<div class="font-medium">故宫门票</div>
+<div class="text-gray-500">11月20日</div>
+</div>
+<span class="text-orange-500">¥60</span>
+</div>
+</div>
+</div>
+<!-- 操作区 -->
+<div class="action-bar justify-between">
+<button type="button" class="btn-text text-sm">导出报表</button>
+<button type="button" class="btn-primary px-8">添加费用</button>
+</div>
+</div>
+
+<!-- 页面8: 个人中心页面 -->
+<div class="page-container" id="page-profile">
+<!-- 导航栏 -->
+<div class="nav-bar justify-between">
+<button type="button" class="btn-text" onclick="showPage('page-home')">
+<span class="iconify" data-icon="mdi:arrow-left"></span>
+</button>
+<div class="font-bold text-lg">我的</div>
+<button type="button" class="btn-text">
+<span class="iconify" data-icon="mdi:bell"></span>
+</button>
+</div>
+<!-- 内容区 -->
+<div class="content-area overflow-auto">
+<div class="bg-gradient-to-r from-blue-500 to-blue-600 p-4 rounded-lg mb-4 text-white">
+<div class="flex items-center gap-3">
+<div class="w-14 h-14 rounded-full bg-blue-200 flex items-center justify-center">
+<span class="iconify text-2xl" data-icon="mdi:account"></span>
+</div>
+<div>
+<div class="font-bold">张三</div>
+<div class="text-sm text-blue-100">VIP会员</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-3 mb-6">
+<div class="bg-gray-50 p-3 rounded-lg text-center">
+<div class="text-sm text-gray-600">已规划</div>
+<div class="text-xl font-bold">12</div>
+</div>
+<div class="bg-gray-50 p-3 rounded-lg text-center">
+<div class="text-sm text-gray-600">旅程天数</div>
+<div class="text-xl font-bold">35</div>
+</div>
+<div class="bg-gray-50 p-3 rounded-lg text-center">
+<div class="text-sm text-gray-600">节省预算</div>
+<div class="text-xl font-bold">¥2400</div>
+</div>
+</div>
+<div class="space-y-2 mb-6">
+<button type="button" class="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 text-sm" onclick="showPage('page-favorites')">
+<span class="iconify mr-2" data-icon="mdi:heart"></span>我的收藏
+</button>
+<button type="button" class="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 text-sm" onclick="showPage('page-history')">
+<span class="iconify mr-2" data-icon="mdi:history"></span>旅行历史
+</button>
+<button type="button" class="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 text-sm" onclick="showPage('page-preferences')">
+<span class="iconify mr-2" data-icon="mdi:cog"></span>偏好设置
+</button>
+<button type="button" class="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 text-sm" onclick="showPage('page-help')">
+<span class="iconify mr-2" data-icon="mdi:help-circle"></span>帮助与反馈
+</button>
+</div>
+<div class="bg-gray-50 p-3 rounded-lg mb-6 text-sm">
+<div class="font-medium mb-2">钱包与积分</div>
+<div class="flex justify-between mb-2">
+<span>账户余额</span>
+<span class="font-medium">¥128</span>
+</div>
+<div class="flex justify-between">
+<span>积分余额</span>
+<span class="font-medium">850</span>
+</div>
+</div>
+</div>
+<!-- 操作区 -->
+<div class="action-bar">
+<button type="button" class="btn-secondary px-12" onclick="showPage('page-login')">退出登录</button>
+</div>
+</div>
+
+<!-- 页面9: 我的收藏页面 -->
+<div class="page-container" id="page-favorites">
+<!-- 导航栏 -->
+<div class="nav-bar justify-between">
+<button type="button" class="btn-text" onclick="showPage('page-profile')">
+<span class="iconify" data-icon="mdi:arrow-left"></span>
+</button>
+<div class="font-bold text-lg">我的收藏</div>
+<button type="button" class="btn-text">
+<span class="iconify" data-icon="mdi:sort"></span>
+</button>
+</div>
+<!-- 内容区 -->
+<div class="content-area overflow-auto">
+<div class="flex gap-2 mb-4 overflow-x-auto hide-scrollbar">
+<button type="button" class="px-4 py-2 bg-blue-500 text-white rounded-full text-sm whitespace-nowrap">全部</button>
+<button type="button" class="px-4 py-2 border border-blue-500 text-blue-500 rounded-full text-sm whitespace-nowrap">行程</button>
+<button type="button" class="px-4 py-2 border border-blue-500 text-blue-500 rounded-full text-sm whitespace-nowrap">景点</button>
+<button type="button" class="px-4 py-2 border border-blue-500 text-blue-500 rounded-full text-sm whitespace-nowrap">酒店</button>
+</div>
+<div class="space-y-3">
+<div class="p-3 bg-gray-50 rounded-lg">
+<div class="flex justify-between items-start">
+<div class="flex-1">
+<h4 class="font-medium text-sm">故宫博物院</h4>
+<p class="text-xs text-gray-600 mt-1">北京必去景点之一</p>
+<div class="text-blue-500 text-xs mt-2">北京 · 4.8⭐ · 参观</div>
+</div>
+<button type="button" class="btn-text">
+<span class="iconify" data-icon="mdi:trash-outline"></span>
+</button>
+</div>
+</div>
+<div class="p-3 bg-gray-50 rounded-lg">
+<div class="flex justify-between items-start">
+<div class="flex-1">
+<h4 class="font-medium text-sm">北京喜来登酒店</h4>
+<p class="text-xs text-gray-600 mt-1">五星级商务酒店</p>
+<div class="text-blue-500 text-xs mt-2">北京 · 4.9⭐ · 住宿</div>
+</div>
+<button type="button" class="btn-text">
+<span class="iconify" data-icon="mdi:trash-outline"></span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 操作区 -->
+<div class="action-bar">
+<button type="button" class="btn-text text-sm">批量操作</button>
+<button type="button" class="btn-secondary px-8">清空收藏</button>
+</div>
+</div>
+
+<!-- 页面10: 旅行历史页面 -->
+<div class="page-container" id="page-history">
+<!-- 导航栏 -->
+<div class="nav-bar justify-between">
+<button type="button" class="btn-text" onclick="showPage('page-profile')">
+<span class="iconify" data-icon="mdi:arrow-left"></span>
+</button>
+<div class="font-bold text-lg">旅行历史</div>
+<button type="button" class="btn-text">
+<span class="iconify" data-icon="mdi:calendar"></span>
+</button>
+</div>
+<!-- 内容区 -->
+<div class="content-area overflow-auto">
+<div class="space-y-3">
+<div class="p-3 border-l-4 border-blue-500 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">
+<div class="font-medium text-sm">北京文化三日游</div>
+<div class="text-xs text-gray-600 mt-1">2025年9月15-17日</div>
+<div class="text-xs text-gray-500 mt-1">参与人数: 2 · 评分: ⭐⭐⭐⭐⭐</div>
+</div>
+<div class="p-3 border-l-4 border-green-500 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">
+<div class="font-medium text-sm">杭州西湖两日游</div>
+<div class="text-xs text-gray-600 mt-1">2025年8月10-11日</div>
+<div class="text-xs text-gray-500 mt-1">参与人数: 3 · 评分: ⭐⭐⭐⭐</div>
+</div>
+<div class="p-3 border-l-4 border-orange-500 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">
+<div class="font-medium text-sm">成都四日游 文化体验</div>
+<div class="text-xs text-gray-600 mt-1">2025年7月5-8日</div>
+<div class="text-xs text-gray-500 mt-1">参与人数: 1 · 评分: ⭐⭐⭐⭐⭐</div>
+</div>
+</div>
+</div>
+<!-- 操作区 -->
+<div class="action-bar justify-between">
+<button type="button" class="btn-text text-sm">导出行程</button>
+<button type="button" class="btn-primary px-8">生成游记</button>
+</div>
+</div>
+
+<!-- 页面11: 偏好设置页面 -->
+<div class="page-container" id="page-preferences">
+<!-- 导航栏 -->
+<div class="nav-bar">
+<button type="button" class="btn-text mr-4" onclick="showPage('page-profile')">
+<span class="iconify" data-icon="mdi:arrow-left"></span>
+</button>
+<div class="font-bold text-lg">偏好设置</div>
+</div>
+<!-- 内容区 -->
+<div class="content-area overflow-auto">
+<h3 class="font-bold text-sm mb-3">旅行偏好</h3>
+<div class="space-y-2 mb-6">
+<label class="flex items-center gap-2 text-sm">
+<input type="checkbox" class="w-4 h-4" checked/>
+<span>背包客自助游</span>
+</label>
+<label class="flex items-center gap-2 text-sm">
+<input type="checkbox" class="w-4 h-4" checked/>
+<span>美食之旅</span>
+</label>
+<label class="flex items-center gap-2 text-sm">
+<input type="checkbox" class="w-4 h-4"/>
+<span>文化体验</span>
+</label>
+</div>
+<h3 class="font-bold text-sm mb-3">预算偏好</h3>
+<div class="mb-6">
+<div class="text-sm mb-2">平均预算范围</div>
+<input type="range" class="w-full" min="1000" max="10000" value="3000"/>
+<div class="text-sm text-gray-600 mt-1">¥1000 - ¥10000</div>
+</div>
+<h3 class="font-bold text-sm mb-3">目的地偏好</h3>
+<div class="space-y-2 mb-6 text-sm">
+<div>喜欢的城市: 北京、上海、成都</div>
+<div>气候偏好: 温暖气候</div>
+<div>风景类型: 人文景观、美食文化</div>
+</div>
+<h3 class="font-bold text-sm mb-3">通知设置</h3>
+<div class="space-y-2 mb-6">
+<label class="flex items-center justify-between text-sm">
+<span>推荐通知</span>
+<input type="checkbox" class="w-4 h-4" checked/>
+</label>
+<label class="flex items-center justify-between text-sm">
+<span>行程提醒</span>
+<input type="checkbox" class="w-4 h-4" checked/>
+</label>
+<label class="flex items-center justify-between text-sm">
+<span>优惠通知</span>
+<input type="checkbox" class="w-4 h-4"/>
+</label>
+</div>
+</div>
+<!-- 操作区 -->
+<div class="action-bar gap-4">
+<button type="button" class="btn-secondary px-8" onclick="showPage('page-profile')">重置</button>
+<button type="button" class="btn-primary px-8" onclick="showPage('page-profile')">保存设置</button>
+</div>
+</div>
+
+<!-- 页面12: 帮助与反馈页面 -->
+<div class="page-container" id="page-help">
+<!-- 导航栏 -->
+<div class="nav-bar">
+<button type="button" class="btn-text mr-4" onclick="showPage('page-profile')">
+<span class="iconify" data-icon="mdi:arrow-left"></span>
+</button>
+<div class="font-bold text-lg">帮助与反馈</div>
+</div>
+<!-- 内容区 -->
+<div class="content-area overflow-auto">
+<div class="mb-6">
+<input type="text" class="form-input" placeholder="搜索常见问题..."/>
+</div>
+<h3 class="font-bold text-sm mb-3">常见问题</h3>
+<div class="space-y-2 mb-6">
+<div class="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 text-sm">
+<div class="font-medium">如何创建行程规划？</div>
+</div>
+<div class="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 text-sm">
+<div class="font-medium">如何导出行程信息？</div>
+</div>
+<div class="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 text-sm">
+<div class="font-medium">如何修改预算？</div>
+</div>
+</div>
+<h3 class="font-bold text-sm mb-3">意见反馈</h3>
+<div class="space-y-3 mb-6">
+<input type="text" class="form-input" placeholder="反馈类型"/>
+<textarea class="form-input h-20 resize-none" placeholder="请描述您的问题或建议..."></textarea>
+<input type="email" class="form-input" placeholder="您的邮箱"/>
+</div>
+<h3 class="font-bold text-sm mb-3">联系我们</h3>
+<div class="text-sm space-y-2 mb-6">
+<div>📞 客服电话: 400-123-4567</div>
+<div>✉️ 邮箱: support@travelmate.com</div>
+<div>💬 在线客服: 工作时间 09:00-20:00</div>
+</div>
+<div class="text-xs text-gray-600">版本: 1.0 | 更新日期: 2025年11月20日</div>
+</div>
+<!-- 操作区 -->
+<div class="action-bar gap-4">
+<button type="button" class="btn-secondary px-8" onclick="showPage('page-profile')">返回</button>
+<button type="button" class="btn-primary px-8">提交反馈</button>
+</div>
+</div>
+
+<script>
+    // 页面切换函数
+    function showPage(pageId) {
+      const pages = document.querySelectorAll('.page-container');
+      pages.forEach(page => page.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+    }
+    
+    // 初始化预算图表
+    document.addEventListener('DOMContentLoaded', function() {
+      const chart = echarts.init(document.getElementById('chart1'));
+      chart.setOption({
+        tooltip: { trigger: 'item' },
+        series: [{
+          type: 'pie',
+          radius: ['40%', '70%'],
+          avoidLabelOverlap: false,
+          itemStyle: { borderRadius: 6 },
+          data: [
+            { value: 320, name: '门票', itemStyle: { color: '#1890FF' } },
+            { value: 640, name: '餐饮', itemStyle: { color: '#52C41A' } },
+            { value: 500, name: '住宿', itemStyle: { color: '#FA8C16' } },
+            { value: 100, name: '交通', itemStyle: { color: '#722ED1' } }
+          ]
+        }]
+      });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>TravelMate PC端原型 - 2025年11月29日</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .card-shadow { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .page-container { display: none; }
+        .page-container.active { display: block; }
+        .sidebar { width: 240px; background: white; border-right: 1px solid #E8E8E8; height: 100vh; position: fixed; top: 0; left: 0; overflow-y: auto; }
+        .main-content { margin-left: 240px; min-height: 100vh; background: #F5F5F5; }
+        .header { height: 64px; background: white; border-bottom: 1px solid #E8E8E8; display: flex; align-items: center; padding: 0 24px; }
+        .content-area { padding: 24px; }
+        .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 12px 24px; cursor: pointer; transition: all 0.2s; }
+        .sidebar-item:hover { background: #F0F5FF; }
+        .sidebar-item.active { background: #E6F7FF; color: #1890FF; border-right: 3px solid #1890FF; }
+        .btn-primary { background-color: #1890FF; color: white; height: 40px; border-radius: 6px; border: none; font-weight: 500; cursor: pointer; transition: all 0.2s; padding: 0 16px; }
+        .btn-primary:hover { background-color: #40A9FF; }
+        .btn-secondary { background-color: white; color: #1890FF; border: 1px solid #1890FF; height: 40px; border-radius: 6px; font-weight: 500; cursor: pointer; transition: all 0.2s; padding: 0 16px; }
+        .btn-secondary:hover { background-color: #F0F5FF; }
+        .form-input { width: 100%; padding: 10px 14px; border: 1px solid #D9D9D9; border-radius: 6px; font-size: 14px; transition: all 0.2s; }
+        .form-input:focus { outline: none; border-color: #1890FF; box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2); }
+        .card { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 20px; }
+        .login-container { max-width: 480px; margin: 0 auto; padding: 40px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 登录页面 -->
+    <div class="page-container active" id="page-login">
+        <div class="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+            <div class="login-container">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold text-blue-600 mb-2">TravelMate</h1>
+                    <p class="text-gray-600">智能旅行规划助手</p>
+                </div>
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">手机号</label>
+                        <input type="tel" class="form-input" placeholder="请输入手机号" required/>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">密码</label>
+                        <input type="password" class="form-input" placeholder="请输入密码" required/>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">验证码</label>
+                            <input type="text" class="form-input" placeholder="验证码"/>
+                        </div>
+                        <button type="button" class="btn-secondary self-end">发送验证码</button>
+                    </div>
+                    <div class="flex gap-4">
+                        <button type="button" class="flex-1 py-2 border border-blue-500 text-blue-500 rounded-lg text-sm flex items-center justify-center gap-2">
+                            <span class="iconify" data-icon="mdi:wechat"></span>微信登录
+                        </button>
+                        <button type="button" class="flex-1 py-2 border border-blue-500 text-blue-500 rounded-lg text-sm flex items-center justify-center gap-2">
+                            <span class="iconify" data-icon="mdi:qqchat"></span>QQ登录
+                        </button>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <button type="button" class="text-sm text-blue-500 hover:underline">忘记密码</button>
+                        <button type="button" class="btn-primary px-8" onclick="showPage('page-home')">登录</button>
+                    </div>
+                    <div class="text-center text-sm mt-4">
+                        <span class="text-gray-600">没有账户？</span>
+                        <button type="button" class="text-blue-500 hover:underline" onclick="showPage('page-register')">立即注册</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 注册页面 -->
+    <div class="page-container" id="page-register">
+        <div class="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+            <div class="login-container">
+                <div class="flex items-center mb-6">
+                    <button type="button" class="text-blue-500 mr-4" onclick="showPage('page-login')">
+                        <span class="iconify" data-icon="mdi:arrow-left"></span>
+                    </button>
+                    <h2 class="text-2xl font-bold">注册账户</h2>
+                </div>
+                <form class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">手机号</label>
+                            <input type="tel" class="form-input" placeholder="手机号" required/>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">验证码</label>
+                            <div class="flex gap-2">
+                                <input type="text" class="form-input flex-1" placeholder="验证码"/>
+                                <button type="button" class="btn-secondary">发送</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">设置密码</label>
+                            <input type="password" class="form-input" placeholder="设置密码" required/>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">确认密码</label>
+                            <input type="password" class="form-input" placeholder="确认密码" required/>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">昵称</label>
+                        <input type="text" class="form-input" placeholder="昵称" required/>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">选择身份</label>
+                        <div class="flex gap-6 mt-2">
+                            <label class="flex items-center gap-2"><input type="radio" name="identity" value="student" class="mr-1"/> 学生</label>
+                            <label class="flex items-center gap-2"><input type="radio" name="identity" value="worker" class="mr-1"/> 上班族</label>
+                            <label class="flex items-center gap-2"><input type="radio" name="identity" value="other" class="mr-1"/> 其他</label>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" id="agree-terms" required/>
+                        <label for="agree-terms" class="text-gray-600">我同意<span class="text-blue-500 cursor-pointer">服务协议</span>和<span class="text-blue-500 cursor-pointer">隐私政策</span></label>
+                    </div>
+                    <div class="flex gap-4">
+                        <button type="button" class="btn-secondary flex-1" onclick="showPage('page-login')">返回登录</button>
+                        <button type="button" class="btn-primary flex-1" onclick="showPage('page-home')">注册</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主应用布局 -->
+    <div class="app-container" style="display: none;">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="p-6 border-b">
+                <div class="font-bold text-blue-600 text-xl">TravelMate</div>
+            </div>
+            <div class="sidebar-item active" onclick="showPage('page-home')">
+                <span class="iconify text-lg" data-icon="mdi:home"></span>
+                <span>首页</span>
+            </div>
+            <div class="sidebar-item" onclick="showPage('page-result')">
+                <span class="iconify text-lg" data-icon="mdi:calendar-check"></span>
+                <span>我的行程</span>
+            </div>
+            <div class="sidebar-item" onclick="showPage('page-map')">
+                <span class="iconify text-lg" data-icon="mdi:map"></span>
+                <span>地图视图</span>
+            </div>
+            <div class="sidebar-item" onclick="showPage('page-budget')">
+                <span class="iconify text-lg" data-icon="mdi:cash"></span>
+                <span>预算管理</span>
+            </div>
+            <div class="sidebar-item" onclick="showPage('page-profile')">
+                <span class="iconify text-lg" data-icon="mdi:account"></span>
+                <span>个人中心</span>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 顶部导航 -->
+            <div class="header justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <input type="text" placeholder="搜索行程、景点..." class="form-input pl-10 w-64"/>
+                        <span class="iconify absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" data-icon="mdi:magnify"></span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button type="button" class="text-gray-600 hover:text-blue-500">
+                        <span class="iconify text-lg" data-icon="mdi:bell"></span>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                            <span class="iconify text-blue-500" data-icon="mdi:account"></span>
+                        </div>
+                        <span class="text-sm font-medium">张三</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 首页 -->
+            <div class="page-container active" id="page-home">
+                <div class="content-area">
+                    <div class="card mb-6">
+                        <div class="text-center mb-6">
+                            <h1 class="text-3xl font-bold mb-2">智能规划您的完美旅程</h1>
+                            <p class="text-gray-600">告诉我您的旅行需求，3步生成专属行程</p>
+                        </div>
+                        <div class="flex justify-center mb-6">
+                            <div class="w-32 h-32 rounded-full bg-blue-100 flex items-center justify-center">
+                                <span class="iconify text-blue-500 text-6xl" data-icon="mdi:map-marker-multiple"></span>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 mb-6">
+                            <textarea class="w-full h-40 bg-transparent text-gray-700 resize-none outline-none" placeholder="例如：'上海三日游，2000元预算，喜欢美食和艺术'" style="font-size: 16px;"></textarea>
+                        </div>
+                        <div class="flex gap-3 flex-wrap mb-6">
+                            <button type="button" class="px-4 py-2 border border-blue-500 text-blue-500 rounded-full text-sm hover:bg-blue-50">北京三日游 1500元</button>
+                            <button type="button" class="px-4 py-2 border border-blue-500 text-blue-500 rounded-full text-sm hover:bg-blue-50">杭州两日游 美食之旅</button>
+                            <button type="button" class="px-4 py-2 border border-blue-500 text-blue-500 rounded-full text-sm hover:bg-blue-50">成都四日游 文化体验</button>
+                            <button type="button" class="px-4 py-2 border border-blue-500 text-blue-500 rounded-full text-sm hover:bg-blue-50">西安三日游 历史文化</button>
+                            <button type="button" class="px-4 py-2 border border-blue-500 text-blue-500 rounded-full text-sm hover:bg-blue-50">厦门两日游 海滨风光</button>
+                        </div>
+                        <div class="flex justify-center">
+                            <button type="button" class="btn-primary px-12" onclick="showPage('page-result')">开始规划</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="card">
+                            <h3 class="font-bold text-lg mb-4">最近规划</h3>
+                            <div class="space-y-3">
+                                <div class="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100" onclick="showPage('page-result')">
+                                    <div class="font-medium">北京文化三日游</div>
+                                    <div class="text-gray-600">3天 · ¥1560</div>
+                                </div>
+                                <div class="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+                                    <div class="font-medium">杭州西湖两日游</div>
+                                    <div class="text-gray-600">2天 · ¥980</div>
+                                </div>
+                                <div class="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+                                    <div class="font-medium">成都四日游 文化体验</div>
+                                    <div class="text-gray-600">4天 · ¥2100</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3 class="font-bold text-lg mb-4">热门推荐</h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition">
+                                    <h4 class="font-medium">故宫博物院</h4>
+                                    <p class="text-xs text-gray-600 mt-1">北京必去景点</p>
+                                    <div class="text-orange-500 mt-2">¥60</div>
+                                </div>
+                                <div class="p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition">
+                                    <h4 class="font-medium">西湖</h4>
+                                    <p class="text-xs text-gray-600 mt-1">杭州标志性景点</p>
+                                    <div class="text-orange-500 mt-2">免费</div>
+                                </div>
+                                <div class="p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition">
+                                    <h4 class="font-medium">兵马俑</h4>
+                                    <p class="text-xs text-gray-600 mt-1">世界第八大奇迹</p>
+                                    <div class="text-orange-500 mt-2">¥120</div>
+                                </div>
+                                <div class="p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition">
+                                    <h4 class="font-medium">鼓浪屿</h4>
+                                    <p class="text-xs text-gray-600 mt-1">厦门海上花园</p>
+                                    <div class="text-orange-500 mt-2">¥90</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 行程生成结果页面 -->
+            <div class="page-container" id="page-result">
+                <div class="content-area">
+                    <div class="card mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <h2 class="text-2xl font-bold">北京文化三日游</h2>
+                                <div class="text-gray-600">3天 · 预算: ¥1560</div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="button" class="btn-secondary">
+                                    <span class="iconify mr-1" data-icon="mdi:share"></span>分享
+                                </button>
+                                <button type="button" class="btn-secondary" onclick="showPage('page-edit')">
+                                    <span class="iconify mr-1" data-icon="mdi:pencil"></span>编辑
+                                </button>
+                                <button type="button" class="btn-primary">保存</button>
+                            </div>
+                        </div>
+
+                        <div class="border-b mb-4">
+                            <div class="flex gap-2">
+                                <button type="button" class="py-3 px-6 border-b-2 border-blue-500 text-blue-500 font-medium">第1天</button>
+                                <button type="button" class="py-3 px-6 text-gray-500 hover:text-blue-500">第2天</button>
+                                <button type="button" class="py-3 px-6 text-gray-500 hover:text-blue-500">第3天</button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="flex gap-4">
+                                <div class="w-16 text-gray-500 font-medium flex-shrink-0">09:00</div>
+                                <div class="flex-1">
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <h3 class="font-medium">故宫博物院</h3>
+                                        <p class="text-gray-600 mt-1">参观紫禁城，感受明清历史</p>
+                                        <div class="flex justify-between items-center mt-2">
+                                            <div class="text-orange-500 font-medium">¥60</div>
+                                            <button type="button" class="text-sm text-blue-500 hover:underline">查看详情</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-16 text-gray-500 font-medium flex-shrink-0">12:30</div>
+                                <div class="flex-1">
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <h3 class="font-medium">四季民福烤鸭</h3>
+                                        <p class="text-gray-600 mt-1">品尝地道北京烤鸭</p>
+                                        <div class="flex justify-between items-center mt-2">
+                                            <div class="text-orange-500 font-medium">¥120</div>
+                                            <button type="button" class="text-sm text-blue-500 hover:underline">查看详情</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-16 text-gray-500 font-medium flex-shrink-0">14:30</div>
+                                <div class="flex-1">
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <h3 class="font-medium">景山公园</h3>
+                                        <p class="text-gray-600 mt-1">俯瞰故宫全景</p>
+                                        <div class="flex justify-between items-center mt-2">
+                                            <div class="text-orange-500 font-medium">¥20</div>
+                                            <button type="button" class="text-sm text-blue-500 hover:underline">查看详情</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="card">
+                            <h3 class="font-bold text-lg mb-4">预算分解</h3>
+                            <div class="flex justify-center mb-6">
+                                <div class="w-64 h-64" id="chart1"></div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                    <span>门票</span>
+                                    <span class="text-orange-500 font-medium">¥320</span>
+                                </div>
+                                <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                    <span>餐饮</span>
+                                    <span class="text-orange-500 font-medium">¥640</span>
+                                </div>
+                                <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                    <span>住宿</span>
+                                    <span class="text-orange-500 font-medium">¥500</span>
+                                </div>
+                                <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                    <span>交通</span>
+                                    <span class="text-orange-500 font-medium">¥100</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3 class="font-bold text-lg mb-4">行程概览</h3>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">总天数</span>
+                                    <span class="font-medium">3天</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">总景点数</span>
+                                    <span class="font-medium">8个</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">总餐饮数</span>
+                                    <span class="font-medium">6个</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">总交通距离</span>
+                                    <span class="font-medium">45.2km</span>
+                                </div>
+                                <div class="pt-4 border-t">
+                                    <button type="button" class="btn-primary w-full" onclick="showPage('page-map')">
+                                        <span class="iconify mr-1" data-icon="mdi:map"></span>查看地图
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 地图视图页面 -->
+            <div class="page-container" id="page-map">
+                <div class="content-area">
+                    <div class="card">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold">地图视图</h2>
+                            <div class="flex gap-2">
+                                <button type="button" class="btn-secondary" onclick="showPage('page-result')">
+                                    <span class="iconify mr-1" data-icon="mdi:view-list"></span>列表视图
+                                </button>
+                                <button type="button" class="btn-primary">
+                                    <span class="iconify mr-1" data-icon="mdi:navigation"></span>导航
+                                </button>
+                            </div>
+                        </div>
+                        <div class="relative h-96 bg-gradient-to-br from-blue-100 to-green-100 rounded-lg overflow-hidden">
+                            <div class="absolute top-4 left-4 bg-white p-3 rounded-lg shadow-md">
+                                <h3 class="font-medium mb-2">行程点</h3>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                                        <span>故宫博物院</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                        <span>四季民福烤鸭</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-3 h-3 rounded-full bg-orange-500"></div>
+                                        <span>景山公园</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute bottom-4 right-4 bg-white p-3 rounded-lg shadow-md">
+                                <div class="text-sm">
+                                    <div class="font-medium">总距离</div>
+                                    <div class="text-blue-500">12.5km</div>
+                                    <div class="font-medium mt-2">预计时间</div>
+                                    <div class="text-blue-500">45分钟</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 编辑调整页面 -->
+            <div class="page-container" id="page-edit">
+                <div class="content-area">
+                    <div class="card mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <h2 class="text-2xl font-bold">编辑行程</h2>
+                                <div class="text-gray-600">北京文化三日游 - 第1天</div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="button" class="btn-secondary">
+                                    <span class="iconify" data-icon="mdi:undo"></span>
+                                </button>
+                                <button type="button" class="btn-secondary">
+                                    <span class="iconify" data-icon="mdi:redo"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-6">
+                            <div class="col-span-2">
+                                <h3 class="font-bold text-lg mb-4">行程安排</h3>
+                                <div class="space-y-3">
+                                    <div class="p-4 bg-gray-100 rounded-lg cursor-move hover:bg-gray-200 transition">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <h4 class="font-medium">故宫博物院</h4>
+                                                <div class="text-gray-600 mt-1">09:00 - 12:00</div>
+                                                <div class="text-orange-500 mt-1 font-medium">¥60</div>
+                                            </div>
+                                            <div class="flex gap-2">
+                                                <button type="button" class="text-gray-500 hover:text-blue-500">
+                                                    <span class="iconify" data-icon="mdi:drag-vertical"></span>
+                                                </button>
+                                                <button type="button" class="text-gray-500 hover:text-red-500">
+                                                    <span class="iconify" data-icon="mdi:delete"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-4 bg-gray-100 rounded-lg cursor-move hover:bg-gray-200 transition">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <h4 class="font-medium">四季民福烤鸭</h4>
+                                                <div class="text-gray-600 mt-1">12:30 - 14:00</div>
+                                                <div class="text-orange-500 mt-1 font-medium">¥120</div>
+                                            </div>
+                                            <div class="flex gap-2">
+                                                <button type="button" class="text-gray-500 hover:text-blue-500">
+                                                    <span class="iconify" data-icon="mdi:drag-vertical"></span>
+                                                </button>
+                                                <button type="button" class="text-gray-500 hover:text-red-500">
+                                                    <span class="iconify" data-icon="mdi:delete"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="font-bold text-lg mb-4">替换推荐</h3>
+                                <div class="space-y-3 mb-6">
+                                    <div class="p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition">
+                                        <h4 class="font-medium">全聚德烤鸭</h4>
+                                        <p class="text-xs text-gray-600 mt-1">百年老字号烤鸭店</p>
+                                        <div class="text-orange-500 mt-2">¥110</div>
+                                    </div>
+                                    <div class="p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition">
+                                        <h4 class="font-medium">大董烤鸭</h4>
+                                        <p class="text-xs text-gray-600 mt-1">创新风味烤鸭</p>
+                                        <div class="text-orange-500 mt-2">¥150</div>
+                                    </div>
+                                </div>
+                                <div class="p-4 bg-orange-50 rounded-lg">
+                                    <h4 class="font-medium mb-2">预算变化</h4>
+                                    <div class="text-lg font-bold">
+                                        <span class="text-orange-500">¥1560</span> → <span class="text-green-500">¥1550</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end gap-4 mt-6">
+                            <button type="button" class="btn-secondary px-8" onclick="showPage('page-result')">取消</button>
+                            <button type="button" class="btn-primary px-8" onclick="showPage('page-result')">确认修改</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 预算管理页面 -->
+            <div class="page-container" id="page-budget">
+                <div class="content-area">
+                    <div class="grid grid-cols-3 gap-6 mb-6">
+                        <div class="card">
+                            <div class="text-sm text-gray-600 mb-1">总预算</div>
+                            <div class="text-4xl font-bold text-blue-500">¥1560</div>
+                        </div>
+                        <div class="card">
+                            <div class="text-sm text-gray-600 mb-1">已支出</div>
+                            <div class="text-4xl font-bold text-green-500">¥850</div>
+                        </div>
+                        <div class="card">
+                            <div class="text-sm text-gray-600 mb-1">剩余预算</div>
+                            <div class="text-4xl font-bold text-orange-500">¥710</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="card">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-lg">分类明细</h3>
+                                <button type="button" class="text-sm text-blue-500 hover:underline">
+                                    <span class="iconify mr-1" data-icon="mdi:filter"></span>筛选
+                                </button>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                            <span class="iconify text-blue-500" data-icon="mdi:car"></span>
+                                        </div>
+                                        <span>交通</span>
+                                    </div>
+                                    <span class="text-orange-500 font-medium">¥200</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                                            <span class="iconify text-green-500" data-icon="mdi:hotel"></span>
+                                        </div>
+                                        <span>住宿</span>
+                                    </div>
+                                    <span class="text-orange-500 font-medium">¥500</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center">
+                                            <span class="iconify text-yellow-500" data-icon="mdi:food"></span>
+                                        </div>
+                                        <span>餐饮</span>
+                                    </div>
+                                    <span class="text-orange-500 font-medium">¥640</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                                            <span class="iconify text-purple-500" data-icon="mdi:ticket"></span>
+                                        </div>
+                                        <span>景点门票</span>
+                                    </div>
+                                    <span class="text-orange-500 font-medium">¥320</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-lg">支出明细</h3>
+                                <button type="button" class="btn-primary">
+                                    <span class="iconify mr-1" data-icon="mdi:plus"></span>添加费用
+                                </button>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center p-3">
+                                    <div>
+                                        <div class="font-medium">北京地铁卡</div>
+                                        <div class="text-sm text-gray-500">11月20日</div>
+                                    </div>
+                                    <span class="text-orange-500">¥100</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3">
+                                    <div>
+                                        <div class="font-medium">故宫门票</div>
+                                        <div class="text-sm text-gray-500">11月20日</div>
+                                    </div>
+                                    <span class="text-orange-500">¥60</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3">
+                                    <div>
+                                        <div class="font-medium">四季民福烤鸭</div>
+                                        <div class="text-sm text-gray-500">11月20日</div>
+                                    </div>
+                                    <span class="text-orange-500">¥120</span>
+                                </div>
+                            </div>
+                            <div class="pt-4 border-t mt-4">
+                                <button type="button" class="text-sm text-blue-500 hover:underline">
+                                    <span class="iconify mr-1" data-icon="mdi:download"></span>导出报表
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 个人中心页面 -->
+            <div class="page-container" id="page-profile">
+                <div class="content-area">
+                    <div class="grid grid-cols-3 gap-6">
+                        <div class="col-span-1">
+                            <div class="card">
+                                <div class="flex items-center gap-4 p-4 bg-blue-50 rounded-lg mb-4">
+                                    <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                                        <span class="iconify text-2xl text-blue-500" data-icon="mdi:account"></span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold">张三</div>
+                                        <div class="text-sm text-blue-500">VIP会员</div>
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <button type="button" class="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 text-sm" onclick="showPage('page-favorites')">
+                                        <span class="iconify mr-2" data-icon="mdi:heart"></span>我的收藏
+                                    </button>
+                                    <button type="button" class="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 text-sm" onclick="showPage('page-history')">
+                                        <span class="iconify mr-2" data-icon="mdi:history"></span>旅行历史
+                                    </button>
+                                    <button type="button" class="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 text-sm" onclick="showPage('page-preferences')">
+                                        <span class="iconify mr-2" data-icon="mdi:cog"></span>偏好设置
+                                    </button>
+                                    <button type="button" class="w-full p-3 text-left border border-gray-200 rounded-lg hover:bg-gray-50 text-sm" onclick="showPage('page-help')">
+                                        <span class="iconify mr-2" data-icon="mdi:help-circle"></span>帮助与反馈
+                                    </button>
+                                </div>
+                                <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                                    <div class="font-medium mb-3">钱包与积分</div>
+                                    <div class="flex justify-between mb-2">
+                                        <span>账户余额</span>
+                                        <span class="font-medium">¥128</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>积分余额</span>
+                                        <span class="font-medium">850</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-2">
+                            <div class="card mb-6">
+                                <h3 class="font-bold text-lg mb-4">我的数据</h3>
+                                <div class="grid grid-cols-3 gap-4">
+                                    <div class="p-4 bg-gray-50 rounded-lg text-center">
+                                        <div class="text-3xl font-bold">12</div>
+                                        <div class="text-gray-600 mt-1">已规划行程</div>
+                                    </div>
+                                    <div class="p-4 bg-gray-50 rounded-lg text-center">
+                                        <div class="text-3xl font-bold">35</div>
+                                        <div class="text-gray-600 mt-1">旅程天数</div>
+                                    </div>
+                                    <div class="p-4 bg-gray-50 rounded-lg text-center">
+                                        <div class="text-3xl font-bold">¥2400</div>
+                                        <div class="text-gray-600 mt-1">节省预算</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <h3 class="font-bold text-lg mb-4">最近活动</h3>
+                                <div class="space-y-3">
+                                    <div class="p-3 border-l-4 border-blue-500 bg-gray-50 rounded">
+                                        <div class="font-medium">生成了北京文化三日游</div>
+                                        <div class="text-sm text-gray-500 mt-1">2025年11月20日 14:30</div>
+                                    </div>
+                                    <div class="p-3 border-l-4 border-green-500 bg-gray-50 rounded">
+                                        <div class="font-medium">收藏了故宫博物院</div>
+                                        <div class="text-sm text-gray-500 mt-1">2025年11月20日 10:15</div>
+                                    </div>
+                                    <div class="p-3 border-l-4 border-orange-500 bg-gray-50 rounded">
+                                        <div class="font-medium">完成了杭州西湖两日游</div>
+                                        <div class="text-sm text-gray-500 mt-1">2025年11月18日 18:45</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 我的收藏页面 -->
+            <div class="page-container" id="page-favorites">
+                <div class="content-area">
+                    <div class="card">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold">我的收藏</h2>
+                            <div class="flex gap-2">
+                                <button type="button" class="text-sm text-blue-500 hover:underline">
+                                    <span class="iconify mr-1" data-icon="mdi:sort"></span>排序
+                                </button>
+                                <button type="button" class="btn-secondary">
+                                    <span class="iconify mr-1" data-icon="mdi:delete-outline"></span>批量删除
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 mb-4 overflow-x-auto hide-scrollbar">
+                            <button type="button" class="px-4 py-2 bg-blue-500 text-white rounded-full text-sm whitespace-nowrap">全部</button>
+                            <button type="button" class="px-4 py-2 border border-blue-500 text-blue-500 rounded-full text-sm whitespace-nowrap">行程</button>
+                            <button type="button" class="px-4 py-2 border border-blue-500 text-blue-500 rounded-full text-sm whitespace-nowrap">景点</button>
+                            <button type="button" class="px-4 py-2 border border-blue-500 text-blue-500 rounded-full text-sm whitespace-nowrap">酒店</button>
+                            <button type="button" class="px-4 py-2 border border-blue-500 text-blue-500 rounded-full text-sm whitespace-nowrap">美食</button>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="p-4 border border-gray-200 rounded-lg">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <h4 class="font-medium">故宫博物院</h4>
+                                        <p class="text-gray-600 mt-1">北京必去景点之一</p>
+                                        <div class="flex items-center gap-2 mt-2 text-sm">
+                                            <span class="text-blue-500">北京</span>
+                                            <span class="text-yellow-500">⭐4.8</span>
+                                            <span class="text-gray-500">参观</span>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="text-gray-500 hover:text-red-500">
+                                        <span class="iconify" data-icon="mdi:trash-outline"></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-4 border border-gray-200 rounded-lg">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <h4 class="font-medium">北京喜来登酒店</h4>
+                                        <p class="text-gray-600 mt-1">五星级商务酒店</p>
+                                        <div class="flex items-center gap-2 mt-2 text-sm">
+                                            <span class="text-blue-500">北京</span>
+                                            <span class="text-yellow-500">⭐4.9</span>
+                                            <span class="text-gray-500">住宿</span>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="text-gray-500 hover:text-red-500">
+                                        <span class="iconify" data-icon="mdi:trash-outline"></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-4 border border-gray-200 rounded-lg">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <h4 class="font-medium">四季民福烤鸭</h4>
+                                        <p class="text-gray-600 mt-1">地道北京烤鸭</p>
+                                        <div class="flex items-center gap-2 mt-2 text-sm">
+                                            <span class="text-blue-500">北京</span>
+                                            <span class="text-yellow-500">⭐4.7</span>
+                                            <span class="text-gray-500">美食</span>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="text-gray-500 hover:text-red-500">
+                                        <span class="iconify" data-icon="mdi:trash-outline"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 旅行历史页面 -->
+            <div class="page-container" id="page-history">
+                <div class="content-area">
+                    <div class="card">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold">旅行历史</h2>
+                            <div class="flex gap-2">
+                                <button type="button" class="btn-secondary">
+                                    <span class="iconify mr-1" data-icon="mdi:calendar"></span>筛选日期
+                                </button>
+                                <button type="button" class="btn-primary">
+                                    <span class="iconify mr-1" data-icon="mdi:book-open-variant"></span>生成游记
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="p-4 border-l-4 border-blue-500 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">
+                                <div class="font-medium">北京文化三日游</div>
+                                <div class="text-gray-600 mt-1">2025年9月15-17日</div>
+                                <div class="flex gap-4 mt-1">
+                                    <span class="text-sm text-gray-500">参与人数: 2</span>
+                                    <span class="text-sm text-gray-500">评分: ⭐⭐⭐⭐⭐</span>
+                                    <button type="button" class="text-sm text-blue-500 hover:underline ml-auto">导出行程</button>
+                                </div>
+                            </div>
+                            <div class="p-4 border-l-4 border-green-500 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">
+                                <div class="font-medium">杭州西湖两日游</div>
+                                <div class="text-gray-600 mt-1">2025年8月10-11日</div>
+                                <div class="flex gap-4 mt-1">
+                                    <span class="text-sm text-gray-500">参与人数: 3</span>
+                                    <span class="text-sm text-gray-500">评分: ⭐⭐⭐⭐</span>
+                                    <button type="button" class="text-sm text-blue-500 hover:underline ml-auto">导出行程</button>
+                                </div>
+                            </div>
+                            <div class="p-4 border-l-4 border-orange-500 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">
+                                <div class="font-medium">成都四日游 文化体验</div>
+                                <div class="text-gray-600 mt-1">2025年7月5-8日</div>
+                                <div class="flex gap-4 mt-1">
+                                    <span class="text-sm text-gray-500">参与人数: 1</span>
+                                    <span class="text-sm text-gray-500">评分: ⭐⭐⭐⭐⭐</span>
+                                    <button type="button" class="text-sm text-blue-500 hover:underline ml-auto">导出行程</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 偏好设置页面 -->
+            <div class="page-container" id="page-preferences">
+                <div class="content-area">
+                    <div class="card">
+                        <h2 class="text-2xl font-bold mb-6">偏好设置</h2>
+
+                        <div class="grid grid-cols-2 gap-8">
+                            <div>
+                                <h3 class="font-bold text-lg mb-4">旅行偏好</h3>
+                                <div class="space-y-3">
+                                    <label class="flex items-center gap-3">
+                                        <input type="checkbox" class="w-5 h-5" checked/>
+                                        <span>背包客自助游</span>
+                                    </label>
+                                    <label class="flex items-center gap-3">
+                                        <input type="checkbox" class="w-5 h-5" checked/>
+                                        <span>美食之旅</span>
+                                    </label>
+                                    <label class="flex items-center gap-3">
+                                        <input type="checkbox" class="w-5 h-5"/>
+                                        <span>文化体验</span>
+                                    </label>
+                                    <label class="flex items-center gap-3">
+                                        <input type="checkbox" class="w-5 h-5" checked/>
+                                        <span>海滨度假</span>
+                                    </label>
+                                </div>
+
+                                <h3 class="font-bold text-lg mt-6 mb-4">预算偏好</h3>
+                                <div>
+                                    <div class="text-sm mb-2">平均预算范围</div>
+                                    <input type="range" class="w-full" min="1000" max="10000" value="3000"/>
+                                    <div class="text-sm text-gray-600 mt-1">¥1000 - ¥10000</div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="font-bold text-lg mb-4">目的地偏好</h3>
+                                <div class="space-y-2 mb-6">
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">喜欢的城市:</span>
+                                        <span class="text-sm font-medium">北京、上海、成都</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">气候偏好:</span>
+                                        <span class="text-sm font-medium">温暖气候</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">风景类型:</span>
+                                        <span class="text-sm font-medium">人文景观、美食文化</span>
+                                    </div>
+                                </div>
+
+                                <h3 class="font-bold text-lg mb-4">通知设置</h3>
+                                <div class="space-y-3">
+                                    <label class="flex items-center justify-between">
+                                        <span>推荐通知</span>
+                                        <input type="checkbox" class="w-5 h-5" checked/>
+                                    </label>
+                                    <label class="flex items-center justify-between">
+                                        <span>行程提醒</span>
+                                        <input type="checkbox" class="w-5 h-5" checked/>
+                                    </label>
+                                    <label class="flex items-center justify-between">
+                                        <span>优惠通知</span>
+                                        <input type="checkbox" class="w-5 h-5"/>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end gap-4 mt-8">
+                            <button type="button" class="btn-secondary px-8">重置</button>
+                            <button type="button" class="btn-primary px-8" onclick="showPage('page-profile')">保存设置</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 帮助与反馈页面 -->
+            <div class="page-container" id="page-help">
+                <div class="content-area">
+                    <div class="card">
+                        <h2 class="text-2xl font-bold mb-6">帮助与反馈</h2>
+
+                        <div class="grid grid-cols-2 gap-8">
+                            <div>
+                                <h3 class="font-bold text-lg mb-4">常见问题</h3>
+                                <div class="space-y-2 mb-6">
+                                    <div class="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+                                        <div class="font-medium">如何创建行程规划？</div>
+                                    </div>
+                                    <div class="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+                                        <div class="font-medium">如何导出行程信息？</div>
+                                    </div>
+                                    <div class="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+                                        <div class="font-medium">如何修改预算？</div>
+                                    </div>
+                                    <div class="p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+                                        <div class="font-medium">如何联系客服？</div>
+                                    </div>
+                                </div>
+
+                                <h3 class="font-bold text-lg mb-4">联系我们</h3>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="iconify text-gray-500" data-icon="mdi:phone"></span>
+                                        <span>客服电话: 400-123-4567</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="iconify text-gray-500" data-icon="mdi:email"></span>
+                                        <span>邮箱: support@travelmate.com</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="iconify text-gray-500" data-icon="mdi:chat"></span>
+                                        <span>在线客服: 工作时间 09:00-20:00</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="font-bold text-lg mb-4">意见反馈</h3>
+                                <form class="space-y-3">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">反馈类型</label>
+                                        <input type="text" class="form-input" placeholder="反馈类型"/>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">问题描述</label>
+                                        <textarea class="form-input h-32 resize-none" placeholder="请描述您的问题或建议..."></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">您的邮箱</label>
+                                        <input type="email" class="form-input" placeholder="您的邮箱"/>
+                                    </div>
+                                    <div class="flex justify-end">
+                                        <button type="button" class="btn-primary px-8">提交反馈</button>
+                                    </div>
+                                </form>
+
+                                <div class="mt-6 text-xs text-gray-600">
+                                    <div>版本: 1.0</div>
+                                    <div>更新日期: 2025年11月29日</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面切换函数
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.page-container');
+            pages.forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+
+            // 如果是登录或注册页面，隐藏应用布局
+            if (pageId === 'page-login' || pageId === 'page-register') {
+                document.querySelector('.app-container').style.display = 'none';
+            } else {
+                document.querySelector('.app-container').style.display = 'flex';
+                // 更新侧边栏激活状态
+                const sidebarItems = document.querySelectorAll('.sidebar-item');
+                sidebarItems.forEach(item => item.classList.remove('active'));
+                if (pageId === 'page-home') {
+                    sidebarItems[0].classList.add('active');
+                } else if (pageId === 'page-result') {
+                    sidebarItems[1].classList.add('active');
+                } else if (pageId === 'page-map') {
+                    sidebarItems[2].classList.add('active');
+                } else if (pageId === 'page-budget') {
+                    sidebarItems[3].classList.add('active');
+                } else if (pageId.startsWith('page-profile') || pageId === 'page-favorites' || pageId === 'page-history' || pageId === 'page-preferences' || pageId === 'page-help') {
+                    sidebarItems[4].classList.add('active');
+                }
+            }
+        }
+
+        // 初始化预算图表
+        document.addEventListener('DOMContentLoaded', function() {
+            const chart = echarts.init(document.getElementById('chart1'));
+            chart.setOption({
+                tooltip: { trigger: 'item' },
+                series: [{
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: { borderRadius: 6 },
+                    data: [
+                        { value: 320, name: '门票', itemStyle: { color: '#1890FF' } },
+                        { value: 640, name: '餐饮', itemStyle: { color: '#52C41A' } },
+                        { value: 500, name: '住宿', itemStyle: { color: '#FA8C16' } },
+                        { value: 100, name: '交通', itemStyle: { color: '#722ED1' } }
+                    ]
+                }]
+            });
+        });
+    </script>
+</body>
+</html>
